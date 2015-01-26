@@ -2,4 +2,6 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">15dp</dimen>
     <dimen name="activity_vertical_margin">30dp</dimen>
+    <dimen name="activity_graph_vertical_margin">15dp</dimen>
+    <dimen name="activity_event_list_height">75dp</dimen>
 </resources>
