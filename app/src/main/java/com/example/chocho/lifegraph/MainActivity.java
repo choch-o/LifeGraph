@@ -15,7 +15,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 
 
-public class MainActivity extends ActionBarActivity implements View.OnClickListener {
+public class MainActivity extends Activity implements View.OnClickListener {
 
     final Context context = this;
     @Override
