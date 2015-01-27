@@ -37,14 +37,15 @@ public class GraphActivity extends Activity implements View.OnClickListener
     FrameLayout framelayout;
     ImageButton graphAddButton, moveToListButton, categoryListButton;
 
+    int itemSize = 5;
     boolean isCheck = false;
-    boolean[] myCheck = new boolean[5];
-    CharSequence[] asdf = new CharSequence[5];
+    boolean[] myCheck = new boolean[itemSize];
+    CharSequence[] asdf = new CharSequence[itemSize];
     List<Integer> mSelectedItmes = new ArrayList<Integer>();
     List<Integer> mTempSelectedItmes = new ArrayList<Integer>();
 
-    /*Animation animFadeIn = AnimationUtils.loadAnimation(GraphActivity.this, android.R.anim.fade_in);
-    Animation animFadeOut = AnimationUtils.loadAnimation(GraphActivity.this, android.R.anim.fade_out);*/
+    Animation animFadeIn;
+    Animation animFadeOut;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,17 +82,19 @@ public class GraphActivity extends Activity implements View.OnClickListener
                 isCheck = !isCheck;
 
                 if(isCheck == false) {
-                    /*graphAddButton.setAnimation(animFadeOut);
-                    moveToListButton.setAnimation(animFadeOut);
-                    categoryListButton.setAnimation(animFadeOut);*/
+                    animFadeIn = AnimationUtils.loadAnimation(GraphActivity.this, android.R.anim.fade_in);
+                    graphAddButton.setAnimation(animFadeIn);
+                    moveToListButton.setAnimation(animFadeIn);
+                    categoryListButton.setAnimation(animFadeIn);
                     graphAddButton.setVisibility(View.VISIBLE);
                     moveToListButton.setVisibility(View.VISIBLE);
                     categoryListButton.setVisibility(View.VISIBLE);
                 }
                 else {
-                    /*graphAddButton.setAnimation(animFadeIn);
-                    moveToListButton.setAnimation(animFadeIn);
-                    categoryListButton.setAnimation(animFadeIn);*/
+                    animFadeOut = AnimationUtils.loadAnimation(GraphActivity.this, android.R.anim.fade_out);
+                    graphAddButton.setAnimation(animFadeOut);
+                    moveToListButton.setAnimation(animFadeOut);
+                    categoryListButton.setAnimation(animFadeOut);
                     graphAddButton.setVisibility(View.INVISIBLE);
                     moveToListButton.setVisibility(View.INVISIBLE);
                     categoryListButton.setVisibility(View.INVISIBLE);
@@ -119,7 +122,7 @@ public class GraphActivity extends Activity implements View.OnClickListener
                 case R.id.categoryListButton:
                     AlertDialog.Builder builder = new AlertDialog.Builder(GraphActivity.this);
 
-                    for (int i = 0; i < 5; i++) {
+                    for (int i = 0; i < itemSize; i++) {
                         if (mSelectedItmes.contains(i)) myCheck[i] = true;
                         else myCheck[i] = false;
                     }
