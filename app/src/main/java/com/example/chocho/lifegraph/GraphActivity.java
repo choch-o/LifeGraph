@@ -6,11 +6,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -25,6 +27,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,11 +39,13 @@ import java.util.List;
  */
 public class GraphActivity extends Activity implements View.OnClickListener
 {
+    axis view = null;
     Intent intent;
     FrameLayout framelayout;
     ImageButton graphAddButton, moveToListButton, categoryListButton;
 
     int itemSize = 5;
+    int width, height;
     boolean isCheck = false;
     boolean[] myCheck = new boolean[itemSize];
     CharSequence[] asdf = new CharSequence[itemSize];
@@ -61,7 +69,8 @@ public class GraphActivity extends Activity implements View.OnClickListener
         categoryListButton.setBackground(null);
 
         framelayout = (FrameLayout) findViewById(R.id.graphContainer);
-        framelayout.addView(new axis(getApplicationContext()));
+        view = new axis(getApplicationContext());
+        framelayout.addView(view);
 
         graphAddButton.setOnClickListener(this);
         moveToListButton.setOnClickListener(this);
@@ -72,6 +81,29 @@ public class GraphActivity extends Activity implements View.OnClickListener
         asdf[2] = "만남";
         asdf[3] = "기타";
         asdf[4] = "기타1";
+    }
+
+    @Override
+    public void onBackPressed() {
+        Paint paint = new Paint();
+
+        //background
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(Color.parseColor("#FFFFFF"));
+
+        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        canvas.drawRect(0,0,width,height,paint);
+        view.draw(canvas);
+        try {
+            FileOutputStream fos = new FileOutputStream(new File("/mnt/sdcard/DCIM/Camera/", "test.png"));
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            Log.w("OK", "!");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Log.w("error", "!");
+        }
+        finish();
     }
 
     public boolean onTouchEvent(MotionEvent event) {
@@ -160,7 +192,6 @@ public class GraphActivity extends Activity implements View.OnClickListener
 
     private class axis extends View {
         int px, py;
-        int width, height;
         int circleRadius = 10;
         Paint pLine = new Paint();
         Paint pCircle = new Paint();
