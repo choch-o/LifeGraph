@@ -70,7 +70,7 @@
         android:layout_alignTop="@id/age"
         android:layout_marginRight="35dp"
         android:layout_marginEnd="35dp"
-        android:textSize="8pt"
+
         />
     <ImageView
         android:id="@+id/event_line2"
@@ -104,7 +104,7 @@
         android:layout_alignTop="@id/score"
         android:layout_marginRight="35dp"
         android:layout_marginEnd="35dp"
-        android:textSize="8pt"
+
         />
     <ImageView
         android:id="@+id/event_line3"
@@ -129,7 +129,7 @@
         android:layout_below="@id/event_line3"/>
     <Spinner
         android:id="@+id/category_spinner"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginStart="20dp"
@@ -142,6 +142,7 @@
         />
 
     <Button
+        android:id="@+id/event_done"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/done"
