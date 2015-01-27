@@ -95,7 +95,7 @@ public class GraphActivity extends Activity implements View.OnClickListener
         Canvas canvas = new Canvas(bitmap);
         canvas.drawRect(0,0,width,height,paint);
         view.draw(canvas);
-        
+
         try {
             FileOutputStream fos = new FileOutputStream(new File("/mnt/sdcard/DCIM/Camera/", "test.png"));
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
