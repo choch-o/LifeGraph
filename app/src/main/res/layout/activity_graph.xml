@@ -27,14 +27,14 @@
             android:layout_toLeftOf="@id/graphAddButton"
             />
 
-        <!--<ImageButton
+        <ImageButton
             android:id="@+id/categoryListButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/list_icon"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            />-->
+            />
 
     </RelativeLayout>
 

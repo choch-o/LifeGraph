@@ -75,7 +75,7 @@ public class GraphActivity extends Activity implements View.OnClickListener
         //Active Button
         graphAddButton = (ImageButton) findViewById(R.id.graphAddButton);
         moveToListButton = (ImageButton) findViewById(R.id.moveToListButton);
-        //categoryListButton = (ImageButton) findViewById(R.id.categoryListButton);
+        categoryListButton = (ImageButton) findViewById(R.id.categoryListButton);
         graphAddButton.setBackground(null);
         moveToListButton.setBackground(null);
         categoryListButton.setBackground(null);
@@ -184,7 +184,7 @@ public class GraphActivity extends Activity implements View.OnClickListener
                     lv.setOnItemClickListener(new ListViewItemClickListener() );
 
                     break;
-                /*case R.id.categoryListButton:
+                case R.id.categoryListButton:
                     AlertDialog.Builder builder = new AlertDialog.Builder(GraphActivity.this);
 
                     for (int i = 0; i < itemSize; i++) {
@@ -219,7 +219,7 @@ public class GraphActivity extends Activity implements View.OnClickListener
 
                     builder.create().show();
                     break;
-                    */
+
             }
         }
         Log.w("Click - ", "out");
