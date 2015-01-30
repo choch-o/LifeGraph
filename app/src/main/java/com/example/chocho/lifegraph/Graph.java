@@ -10,14 +10,14 @@ public class Graph {
     String _name;
     String _date;
     int _event_num;
-    String _image;
+    byte[] _image;
 
     // Empty constructor
     public Graph(){
 
     }
     // constructor
-    public Graph(int id, String name, String date, int event_num, String image){
+    public Graph(int id, String name, String date, int event_num, byte[] image){
         this._id = id;
         this._name = name;
         this._date = date;
@@ -26,7 +26,7 @@ public class Graph {
     }
 
     // constructor
-    public Graph(String name, String date, int event_num, String image){
+    public Graph(String name, String date, int event_num, byte[] image){
         this._name = name;
         this._date = date;
         this._event_num = event_num;
@@ -68,11 +68,11 @@ public class Graph {
         this._event_num = event_num;
     }
 
-    public String getImage(){
+    public byte[] getImage(){
         return this._image;
     }
 
-    public void setImage(String image){
+    public void setImage(byte[] image){
         this._image = image;
     }
 }

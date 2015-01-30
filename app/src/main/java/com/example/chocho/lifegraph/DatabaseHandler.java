@@ -55,7 +55,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     //Table Create Statements
     // Graph table create statement
     private static final String CREATE_TABLE_GRAPH = "CREATE TABLE " + TABLE_GRAPH + "(" + KEY_ID + " INTEGER PRIMARY KEY,"
-            + KEY_NAME + " TEXT," + KEY_DATE + " DATETIME," + KEY_EVENT_NUM + " INTEGER," + KEY_IMAGE + " TEXT" + ")";
+            + KEY_NAME + " TEXT," + KEY_DATE + " DATETIME," + KEY_EVENT_NUM + " INTEGER," + KEY_IMAGE + " BLOB" + ")";
 
     // Event table create statement
     private static final String CREATE_TABLE_EVENT = "CREATE TABLE " + TABLE_EVENT + "(" + KEY_ID + " INTEGER PRIMARY KEY,"
@@ -64,7 +64,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     // Graph_Event table create statement
     private static final String CREATE_TABLE_EVENT_GRAPH = "CREATE TABLE "
             + TABLE_EVENT_GRAPH + "(" + KEY_ID + " INTEGER PRIMARY KEY,"
-            + KEY_GRAPH_ID + " INTEGER," + KEY_EVENT_ID + " INTEGER," + ")";
+            + KEY_GRAPH_ID + " INTEGER," + KEY_EVENT_ID + " INTEGER" + ")";
 
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -125,7 +125,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public Event getEvent(long event_id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String selectQuery = "SELECT  * FROM " + TABLE_EVENT + " WHERE "
+        String selectQuery = "SELECT * FROM " + TABLE_EVENT + " WHERE "
                 + KEY_ID + " = " + event_id;
 
         Log.e(LOG, selectQuery);
@@ -151,7 +151,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * */
     public List<Event> getAllEvents() {
         List<Event> events = new ArrayList<Event>();
-        String selectQuery = "SELECT  * FROM " + TABLE_EVENT;
+        String selectQuery = "SELECT * FROM " + TABLE_EVENT;
 
         Log.e(LOG, selectQuery);
 
@@ -183,7 +183,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public List<Event> getAllEventsByGraph(String graph_name) {
         List<Event> events = new ArrayList<Event>();
 
-        String selectQuery = "SELECT  * FROM " + TABLE_EVENT + " td, "
+        String selectQuery = "SELECT * FROM " + TABLE_EVENT + " td, "
                 + TABLE_GRAPH + " tg, " + TABLE_EVENT_GRAPH+ " tt WHERE tg."
                 + KEY_NAME + " = '" + graph_name + "'" + " AND tg." + KEY_ID
                 + " = " + "tt." + KEY_GRAPH_ID + " AND td." + KEY_ID + " = "
@@ -217,7 +217,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * getting event count
      */
     public int getEventCount() {
-        String countQuery = "SELECT  * FROM " + TABLE_EVENT;
+        String countQuery = "SELECT * FROM " + TABLE_EVENT;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
 
@@ -267,16 +267,28 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         // Inserting Row
         long graph_id = db.insert(TABLE_GRAPH, null, values);
-
+        Log.w("GRAPH CREATED: ", graph.getName()+graph.getID());
         return graph_id;
         //db.close(); // Closing database connection
     }
 
+    Graph getGraph(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_GRAPH, new String[] {KEY_ID, KEY_NAME, KEY_DATE, KEY_EVENT_NUM, KEY_IMAGE}, KEY_ID + "=?",
+                new String[] {String.valueOf(id)}, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        Graph graph = new Graph(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(1), cursor.getInt(1), cursor.getBlob(1));
+
+        return graph;
+    }
     // Getting All Graphs
     public List<Graph> getAllGraphs() {
         List<Graph> graphs = new ArrayList<Graph>();
         // Select All Query
-        String selectQuery = "SELECT  * FROM " + TABLE_GRAPH;
+        String selectQuery = "SELECT * FROM " + TABLE_GRAPH;
 
         Log.e(LOG, selectQuery);
 
@@ -291,7 +303,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 graph.setName(c.getString((c.getColumnIndex(KEY_NAME))));
                 graph.setDate(c.getString((c.getColumnIndex(KEY_DATE))));
                 graph.setEventNum(c.getInt((c.getColumnIndex(KEY_EVENT_NUM))));
-                graph.setImage(c.getString((c.getColumnIndex(KEY_IMAGE))));
+                graph.setImage(c.getBlob((c.getColumnIndex(KEY_IMAGE))));
 
                 // Adding contact to list
                 graphs.add(graph);

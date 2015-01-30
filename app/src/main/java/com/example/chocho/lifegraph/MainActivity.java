@@ -5,43 +5,84 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListView;
+
+import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
     final Context context = this;
+    DatabaseHandler db = new DatabaseHandler(this);
+    ArrayList<Graph> imageArry = new ArrayList<Graph>();
+    GraphImageAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Log.w("enter","entered main");
+
         ImageButton addButton = (ImageButton)findViewById(R.id.addButton);
         addButton.setBackground(null);
         addButton.setOnClickListener(this);
+
+        Log.w("Reading: ", "Reading all graphs..");
+        List<Graph> graphs = db.getAllGraphs();
+
+        Log.w("Read: ", "Read all graphs");
+        for (Graph graph : graphs) {
+            String log = "ID: "+graph.getID()+" ,Name: " + graph.getName();
+            Log.d("Name: ", log);
+
+            imageArry.add(graph);
+
+        }
+        adapter = new GraphImageAdapter(this, R.layout.main_list, imageArry);
+        ListView graphList = (ListView) findViewById(R.id.main_listview);
+        graphList.setAdapter(adapter);
     }
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.addButton:
-                LayoutInflater li = LayoutInflater.from(context);
+                LayoutInflater li = MainActivity.this.getLayoutInflater();
                 View dialogView = li.inflate(R.layout.main_dialog, null);
 
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+                final EditText dialogEdit = (EditText) dialogView.findViewById(R.id.main_dialog_edit);
+                final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
                 alertDialogBuilder.setView(dialogView);
 
-                alertDialogBuilder.setCancelable(false).setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                       public void onClick(DialogInterface dialog, int id) {
-                           Intent intent = new Intent(context, GraphActivity.class);
-                           startActivity(intent);
-                       }
+                alertDialogBuilder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        String newTitle = dialogEdit.getText().toString();
+                        Intent intent = new Intent(context, GraphActivity.class);
+                        db.createGraph(new Graph(newTitle, null, 0, null));
+                        startActivity(intent);
+
+                    }
+                });
+
+                alertDialogBuilder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
                 });
 
                 AlertDialog alertDialog = alertDialogBuilder.create();
