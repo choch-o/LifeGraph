@@ -10,10 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -24,17 +21,14 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Spinner;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,9 +56,6 @@ public class GraphActivity extends Activity implements View.OnClickListener
     //Fade in, out
     Animation animFadeIn;
     Animation animFadeOut;
-
-    float rTop = 0, rLeft = 0;
-    float rRight = -1, rBottom = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,38 +110,6 @@ public class GraphActivity extends Activity implements View.OnClickListener
 
         finish();
     }
-
-    /*public boolean onTouchEvent(MotionEvent event) {
-        int action = event.getAction();
-
-        switch(action) {
-            case MotionEvent.ACTION_DOWN :
-                isCheck = !isCheck;
-
-                if(isCheck == false) {
-                    animFadeIn = AnimationUtils.loadAnimation(GraphActivity.this, android.R.anim.fade_in);
-                    graphAddButton.setAnimation(animFadeIn);
-                    moveToListButton.setAnimation(animFadeIn);
-                    categoryListButton.setAnimation(animFadeIn);
-                    graphAddButton.setVisibility(View.VISIBLE);
-                    moveToListButton.setVisibility(View.VISIBLE);
-                    categoryListButton.setVisibility(View.VISIBLE);
-                }
-                else {
-                    animFadeOut = AnimationUtils.loadAnimation(GraphActivity.this, android.R.anim.fade_out);
-                    graphAddButton.setAnimation(animFadeOut);
-                    moveToListButton.setAnimation(animFadeOut);
-                    categoryListButton.setAnimation(animFadeOut);
-                    graphAddButton.setVisibility(View.INVISIBLE);
-                    moveToListButton.setVisibility(View.INVISIBLE);
-                    categoryListButton.setVisibility(View.INVISIBLE);
-                }
-
-                break;
-        }
-
-        return super.onTouchEvent(event);
-    }*/
 
     @Override
     public void onClick(View v) {
@@ -275,22 +234,16 @@ public class GraphActivity extends Activity implements View.OnClickListener
         @Override
         public void onDraw(Canvas canvas)
         {
-            canvas.save();
+            width = framelayout.getMeasuredWidth();
+            height = framelayout.getMeasuredHeight();
 
+            canvas.save();
             canvas.translate(mPosX, mPosY);
 
             if (mScaleDetector.isInProgress()) {
                 canvas.scale(mScaleFactor, mScaleFactor, mScaleDetector.getFocusX(), mScaleDetector.getFocusY());
             } else {
                 canvas.scale(mScaleFactor, mScaleFactor, mLastGestureX, mLastGestureY);
-            }
-
-            width = framelayout.getMeasuredWidth();
-            height = framelayout.getMeasuredHeight();
-
-            if(rRight == -1 && rBottom == -1) {
-                rRight = width;
-                rBottom = height;
             }
 
             px = (int) TypedValue.applyDimension(
@@ -321,7 +274,6 @@ public class GraphActivity extends Activity implements View.OnClickListener
 
             getPoint(x, y, x2, y2);
             canvas.drawLine(linePoint[0], linePoint[1], linePoint[2], linePoint[3], pLine);
-
 
             super.onDraw(canvas);
             canvas.restore();
@@ -385,7 +337,7 @@ public class GraphActivity extends Activity implements View.OnClickListener
 
                     break;
                 }
-                case MotionEvent.ACTION_POINTER_1_DOWN: {
+                case MotionEvent.ACTION_POINTER_DOWN: {
                     if (mScaleDetector.isInProgress())
                     {
                         final float gx = mScaleDetector.getFocusX();
@@ -402,6 +354,8 @@ public class GraphActivity extends Activity implements View.OnClickListener
 
                     // Only move if the ScaleGestureDetector isn't processing a gesture.
                     final boolean isIn = mScaleDetector.isInProgress();
+                    final float tWidth = width / mScaleFactor, tHeight = height / mScaleFactor;
+                    float leftTopX, leftTopY, rightBottomX, rightBottomY;
 
                     if(!isIn)
                     {
@@ -413,13 +367,16 @@ public class GraphActivity extends Activity implements View.OnClickListener
                         final float dx = x - mLastTouchX;
                         final float dy = y - mLastTouchY;
 
-                        mPosX += dx;
-                        mPosY += dy;
+                        leftTopX = (0 - mPosX - dx - mLastGestureX) / mScaleFactor + mLastGestureX;
+                        leftTopY = (0 - mPosY - dy - mLastGestureY) / mScaleFactor + mLastGestureY;
+                        rightBottomX = leftTopX + tWidth;
+                        rightBottomY = leftTopY + tHeight;
 
-                        rLeft += dx;
-                        rRight += dx;
-                        rTop += dy;
-                        rBottom += dy;
+                        Log.w("leftTopX - ", toString().valueOf(leftTopX));
+                        Log.w("rightBottomX - ", toString().valueOf(rightBottomX));
+                        Log.w("dx - ", toString().valueOf(dx) + "(width - " + toString().valueOf(width) + ")");
+                        if((leftTopX < 0 && dx < 0) || (rightBottomX > width && dx > 0) || (leftTopX >= 0 && rightBottomX <= width)) mPosX += dx;
+                        if((leftTopY < 0 && dy < 0) || (rightBottomY > height && dy > 0) || (leftTopY >= 0 && rightBottomY <= height)) mPosY += dy;
 
                         invalidate();
 
@@ -435,13 +392,16 @@ public class GraphActivity extends Activity implements View.OnClickListener
                         final float gdx = gx - mLastGestureX;
                         final float gdy = gy - mLastGestureY;
 
-                        mPosX += gdx;
-                        mPosY += gdy;
+                        leftTopX = (0 - mPosX - gdx - gx) / mScaleFactor + gx;
+                        leftTopY = (0 - mPosY - gdy - gy) / mScaleFactor + gy;
+                        rightBottomX = leftTopX + tWidth;
+                        rightBottomY = leftTopY + tHeight;
 
-                        rLeft += gdx;
-                        rRight += gdx;
-                        rTop += gdy;
-                        rBottom += gdy;
+                        Log.w("leftTopX - ", toString().valueOf(leftTopX));
+                        Log.w("rightBottomX - ", toString().valueOf(rightBottomX));
+                        //Log.w("dx - ", toString().valueOf(dx) + "(width - " + toString().valueOf(width) + ")");
+                        if((leftTopX < 0 && gdx < 0) || (rightBottomX > width && gdx > 0) || (leftTopX >= 0 && rightBottomX <= width)) mPosX += gdx;
+                        if((leftTopY < 0 && gdy < 0) || (rightBottomY > height && gdy > 0) || (leftTopY >= 0 && rightBottomY <= height)) mPosY += gdy;
 
                         invalidate();
 
@@ -464,7 +424,7 @@ public class GraphActivity extends Activity implements View.OnClickListener
 
                 case MotionEvent.ACTION_POINTER_UP: {
                     final int pointerIndex = (ev.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK)
-                                                >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+                            >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
                     final int pointerId = ev.getPointerId(pointerIndex);
 
                     if (pointerId == mActivePointerId)
@@ -505,7 +465,7 @@ public class GraphActivity extends Activity implements View.OnClickListener
                 mScaleFactor *= detector.getScaleFactor();
 
                 // Don't let the object get too small or too large.
-                mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, 10.0f));
+                mScaleFactor = Math.max(1f, Math.min(mScaleFactor, 5.0f));
 
                 invalidate();
                 return true;
