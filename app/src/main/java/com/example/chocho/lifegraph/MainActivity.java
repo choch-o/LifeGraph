@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -48,7 +49,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         Log.w("Read: ", "Read all graphs");
         for (Graph graph : graphs) {
             String log = "ID: "+graph.getID()+" ,Name: " + graph.getName();
-            Log.d("Name: ", log);
+            Log.w("Name: ", log);
 
             imageArry.add(graph);
 
@@ -56,7 +57,17 @@ public class MainActivity extends Activity implements View.OnClickListener {
         adapter = new GraphImageAdapter(this, R.layout.main_list, imageArry);
         ListView graphList = (ListView) findViewById(R.id.main_listview);
         graphList.setAdapter(adapter);
+        graphList.setOnItemClickListener(mItemClickListener);
     }
+
+    AdapterView.OnItemClickListener mItemClickListener = new AdapterView.OnItemClickListener() {
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Log.w("onClick: ", "ID " + id);
+            Intent intent = new Intent(context, GraphActivity.class);
+            intent.putExtra("graphID", id+1);
+            startActivity(intent);
+        }
+    };
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -72,9 +83,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 alertDialogBuilder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         String newTitle = dialogEdit.getText().toString();
-                        Intent intent = new Intent(context, GraphActivity.class);
-                        db.createGraph(new Graph(newTitle, null, 0, null));
-                        startActivity(intent);
+                        Intent addIntent = new Intent(context, GraphActivity.class);
+                        long newGraphID = db.createGraph(new Graph(newTitle, null, 0, null));
+                        Log.w("newGraphID", String.valueOf(newGraphID));
+                        addIntent.putExtra("graphID", newGraphID);
+                        startActivity(addIntent);
 
                     }
                 });
