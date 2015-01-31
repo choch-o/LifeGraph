@@ -8,10 +8,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by chocho on 2015-01-25.
@@ -24,6 +26,7 @@ public class EventActivity extends Activity {
     ArrayList<String> categoryList = new ArrayList<String>();
 
     EditText event_edit;
+    ImageButton event_add_cate;
     Button event_done;
     Button event_cancel;
 
@@ -43,6 +46,7 @@ public class EventActivity extends Activity {
         graphID = getIntent().getLongExtra("graphID", 0);
         Log.w("Event graph ID", String.valueOf(graphID));
         event_edit = (EditText) findViewById(R.id.event_edittext);
+
         final Spinner age_spinner = (Spinner) findViewById(R.id.age_spinner);
         final Spinner score_spinner = (Spinner) findViewById(R.id.score_spinner);
         final Spinner category_spinner = (Spinner) findViewById(R.id.category_spinner);
@@ -59,9 +63,19 @@ public class EventActivity extends Activity {
             scoreList.add("-"+Integer.toString(i));
         }*/
 
-        categoryList.add("학업");
-        categoryList.add("여행");
-        categoryList.add("만남");
+        List<Category> cates = db.getAllCategory();
+
+        Log.w("Read: ", "Read all categories");
+        for (Category cate : cates) {
+            String log = "ID: "+cate.getID()+" ,Name: " + cate.getName();
+            Log.w("Name: ", log);
+
+            categoryList.add(cate.getName());
+
+        }
+        //categoryList.add("학업");
+        //categoryList.add("여행");
+        //categoryList.add("만남");
 
         //Create the ArrayAdapter
         ArrayAdapter<String> ageAdapter = new ArrayAdapter<String>(EventActivity.this, android.R.layout.simple_spinner_item, ageList);
@@ -107,6 +121,14 @@ public class EventActivity extends Activity {
             }
         });
         */
+        event_add_cate = (ImageButton) findViewById(R.id.event_add_cate);
+        event_add_cate.setBackground(null);
+        event_add_cate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         event_done = (Button) findViewById(R.id.event_done);
         event_done.setOnClickListener(new View.OnClickListener() {
             @Override

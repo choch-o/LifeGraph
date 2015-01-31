@@ -127,35 +127,50 @@
         android:text="@string/category"
         android:textSize="9pt"
         android:layout_below="@id/event_line3"/>
-    <Spinner
-        android:id="@+id/category_spinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginStart="20dp"
-        android:layout_toRightOf="@id/category"
-        android:layout_toEndOf="@id/category"
-        android:layout_alignTop="@id/category"
+    <ImageButton
+        android:id="@+id/event_add_cate"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:src="@drawable/add_icon"
+        android:contentDescription="@null"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_marginRight="35dp"
         android:layout_marginEnd="35dp"
+        android:layout_alignTop='@id/category'/>
+    <Spinner
+        android:id="@+id/category_spinner"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/event_add_cate"
+        android:layout_toStartOf="@id/event_add_cate"
+        android:layout_alignLeft="@id/age_spinner"
+        android:layout_alignStart="@id/age_spinner"
+        android:layout_alignTop="@id/category"
         android:textSize="8pt"
         />
 
-    <Button
-        android:id="@+id/event_done"
-        android:layout_width="wrap_content"
+
+    <LinearLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/done"
-        android:layout_alignParentLeft ="true"
-        android:layout_marginLeft="70dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="40dp"/>
-    <Button
-        android:id="@+id/event_cancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="취소"
-        android:layout_alignTop="@id/event_done"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="70dp"/>
+        android:layout_below="@id/category"
+        android:layout_marginTop="90dp">
+        <Button
+            android:id="@+id/event_cancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="취소"
+            android:layout_weight="1"
+            android:layout_marginRight="2.5dp"
+            android:layout_marginLeft="5dp"/>
+        <Button
+            android:id="@+id/event_done"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/done"
+            android:layout_weight="1"
+            android:layout_marginLeft="2.5dp"
+            android:layout_marginRight="5dp"/>
+    </LinearLayout>
 </RelativeLayout>
