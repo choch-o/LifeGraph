@@ -31,6 +31,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String TABLE_GRAPH = "graph";
     private static final String TABLE_EVENT = "event";
     private static final String TABLE_EVENT_GRAPH = "event_graph";
+    private static final String TABLE_CATEGORY = "category";
 
     // Common Columns names
     private static final String KEY_ID = "id";
@@ -46,11 +47,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String KEY_AGE = "age";
     private static final String KEY_SCORE = "score";
     private static final String KEY_CATEGORY = "category";
-    private static final String KEY_COLOR= "color";
 
     // GRAPH_EVENT Table column names
     private static final String KEY_GRAPH_ID = "graph_id";
     private static final String KEY_EVENT_ID = "event_id";
+
+    // CATEGORY Table column names
+    private static final String KEY_CATE_NAME= "cate_name";
+    private static final String KEY_COLOR= "color";
 
     //Table Create Statements
     // Graph table create statement
@@ -59,12 +63,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     // Event table create statement
     private static final String CREATE_TABLE_EVENT = "CREATE TABLE " + TABLE_EVENT + "(" + KEY_ID + " INTEGER PRIMARY KEY,"
-            + KEY_EVENT_NAME + " TEXT," + KEY_AGE + " INTEGER," + KEY_SCORE + " INTEGER," + KEY_CATEGORY + " TEXT" + KEY_COLOR + " TEXT" + ")";
+            + KEY_EVENT_NAME + " TEXT," + KEY_AGE + " INTEGER," + KEY_SCORE + " INTEGER," + KEY_CATEGORY + " TEXT" + ")";
 
     // Graph_Event table create statement
     private static final String CREATE_TABLE_EVENT_GRAPH = "CREATE TABLE "
             + TABLE_EVENT_GRAPH + "(" + KEY_ID + " INTEGER PRIMARY KEY,"
             + KEY_GRAPH_ID + " INTEGER," + KEY_EVENT_ID + " INTEGER" + ")";
+
+    // Category table create statement
+    private static final String CREATE_TABLE_CATEGORY = "CREATE TABLE " + TABLE_CATEGORY + "("
+            + KEY_ID + " INTEGER PRIMARY KEY," + KEY_CATE_NAME + " TEXT," + KEY_COLOR + " TEXT" + ")";
 
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -76,6 +84,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_GRAPH);
         db.execSQL(CREATE_TABLE_EVENT);
         db.execSQL(CREATE_TABLE_EVENT_GRAPH);
+        db.execSQL(CREATE_TABLE_CATEGORY);
     }
 
     // Upgrading database
@@ -85,6 +94,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_GRAPH);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENT);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENT_GRAPH);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CATEGORY);
 
         // Create tables again
         onCreate(db);
@@ -98,7 +108,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     /**
      * Creating a event
      */
-    public long createEvent(Event event, long[] graph_ids) {
+    public long createEvent(Event event, long graph_id) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -106,15 +116,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_AGE, event.getAge());
         values.put(KEY_SCORE, event.getScore());
         values.put(KEY_CATEGORY, event.getCategory());
-        values.put(KEY_COLOR, event.getColor());
 
         // insert row
         long event_id = db.insert(TABLE_EVENT, null, values);
 
         // insert tag_ids
-        for (long graph_id : graph_ids) {
             createEventGraph(event_id, graph_id);
-        }
 
         return event_id;
     }
@@ -141,7 +148,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         event.setAge(c.getInt(c.getColumnIndex(KEY_AGE)));
         event.setScore(c.getInt(c.getColumnIndex(KEY_SCORE)));
         event.setCategory(c.getString(c.getColumnIndex(KEY_CATEGORY)));
-        event.setColor(c.getString(c.getColumnIndex(KEY_COLOR)));
+
 
         return event;
     }
@@ -167,7 +174,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 event.setAge(c.getInt(c.getColumnIndex(KEY_AGE)));
                 event.setScore(c.getInt(c.getColumnIndex(KEY_SCORE)));
                 event.setCategory(c.getString(c.getColumnIndex(KEY_CATEGORY)));
-                event.setColor(c.getString(c.getColumnIndex(KEY_COLOR)));
 
                 // adding to event list
                 events.add(event);
@@ -203,7 +209,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 event.setAge(c.getInt(c.getColumnIndex(KEY_AGE)));
                 event.setScore(c.getInt(c.getColumnIndex(KEY_SCORE)));
                 event.setCategory(c.getString(c.getColumnIndex(KEY_CATEGORY)));
-                event.setColor(c.getString(c.getColumnIndex(KEY_COLOR)));
 
                 // adding to event
                 events.add(event);
@@ -239,7 +244,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_AGE, event.getAge());
         values.put(KEY_SCORE, event.getScore());
         values.put(KEY_CATEGORY, event.getCategory());
-        values.put(KEY_COLOR, event.getColor());
 
         // updating row
         return db.update(TABLE_EVENT, values, KEY_ID + " = ?",
@@ -385,6 +389,83 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 new String[] { String.valueOf(id) });
     }
 
+//----------------------CATEGORY table  methods-----------------------//
+
+    public long createCategory(Category cate) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_CATE_NAME, cate.getName());
+        values.put(KEY_COLOR, cate.getColor());
+
+        // Inserting Row
+        long cate_id = db.insert(TABLE_CATEGORY, null, values);
+        Log.w("CATEGORY CREATED: ", cate.getName()+" "+cate_id);
+        return cate_id;
+        //db.close(); // Closing database connection
+    }
+
+    Category getCategory(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_CATEGORY, new String[] {KEY_ID, KEY_CATE_NAME, KEY_COLOR}, KEY_ID + "=?",
+                new String[] {String.valueOf(id)}, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        Category categ= new Category(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(1));
+
+        return categ;
+    }
+    // Getting All Categories
+    public List<Category> getAllCategory() {
+        List<Category> cates = new ArrayList<Category>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_CATEGORY;
+
+        Log.e(LOG, selectQuery);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (c.moveToFirst()) {
+            do {
+                Category cate = new Category();
+                cate.setID(c.getInt((c.getColumnIndex(KEY_ID))));
+                cate.setName(c.getString((c.getColumnIndex(KEY_CATE_NAME))));
+                cate.setColor(c.getString(c.getColumnIndex(KEY_COLOR)));
+
+                // Adding contact to list
+                cates.add(cate);
+            } while (c.moveToNext());
+        }
+
+        // return contact list
+        return cates;
+    }
+
+    // Updating single category
+    public int updateCategory(Category cate) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_CATE_NAME, cate.getName());
+        values.put(KEY_COLOR, cate.getColor());
+
+        // updating row
+        return db.update(TABLE_GRAPH, values, KEY_ID + " = ?",
+                new String[] { String.valueOf(cate.getID()) });
+    }
+
+    // Deleting single contact
+    public void deleteCategory(long cate_id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.delete(TABLE_GRAPH, KEY_ID + " = ?",
+                new String[]{String.valueOf(cate_id)});
+        //db.close();
+    }
     // closing database
     public void closeDB() {
         SQLiteDatabase db = this.getReadableDatabase();

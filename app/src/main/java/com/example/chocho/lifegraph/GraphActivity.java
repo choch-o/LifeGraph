@@ -37,6 +37,8 @@ import java.util.List;
  */
 public class GraphActivity extends Activity implements View.OnClickListener
 {
+    long graphID;
+
     Intent intent;
     axis view = null;
     axis tView = null;
@@ -62,6 +64,8 @@ public class GraphActivity extends Activity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.activity_graph);
+
+        graphID = getIntent().getLongExtra("graphID", 0);
 
         //Active Button
         graphAddButton = (ImageButton) findViewById(R.id.graphAddButton);
@@ -124,6 +128,7 @@ public class GraphActivity extends Activity implements View.OnClickListener
             switch (v.getId()) {
                 case R.id.graphAddButton:
                     intent = new Intent(this, EventActivity.class);
+                    intent.putExtra("graphID", graphID);
                     startActivity(intent);
 
                     break;

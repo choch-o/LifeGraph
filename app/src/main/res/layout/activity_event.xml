@@ -146,7 +146,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/done"
-        android:layout_centerHorizontal="true"
+        android:layout_alignParentLeft ="true"
+        android:layout_marginLeft="70dp"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="40dp"/>
+    <Button
+        android:id="@+id/event_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="취소"
+        android:layout_alignTop="@id/event_done"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="70dp"/>
 </RelativeLayout>
