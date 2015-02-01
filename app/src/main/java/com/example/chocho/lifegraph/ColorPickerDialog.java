@@ -18,6 +18,7 @@ import android.widget.ProgressBar;
  */
 public class ColorPickerDialog extends DialogFragment implements ColorPickerSwatch.OnColorSelectedListener {
     protected AlertDialog mAlertDialog;
+    private DialogInterface.OnDismissListener _listener;
     protected int[] mColors = null;
     protected int mColumns;
     protected ColorPickerSwatch.OnColorSelectedListener mListener;
@@ -82,6 +83,12 @@ public class ColorPickerDialog extends DialogFragment implements ColorPickerSwat
                 new_cate_color = String.format("#%06X", (0xFFFFFF & (mSelectedColor)));
                 Category new_cate = new Category(new_cate_name, new_cate_color);
                 db.createCategory(new_cate);
+                /*
+                if (_listener == null) {} else {
+                    _listener.onDismiss();
+                }*/
+                EventActivity callingActivity = (EventActivity) getActivity();
+                callingActivity.updateCategorySpinner();
                 dialog.dismiss();
             }
         });
@@ -95,7 +102,9 @@ public class ColorPickerDialog extends DialogFragment implements ColorPickerSwat
 
         return this.mAlertDialog;
     }
-
+    public void setOnDismissListener(DialogInterface.OnDismissListener $listener) {
+        _listener = $listener;
+    }
     public void onSaveInstanceState(Bundle bundle) {
         super.onSaveInstanceState(bundle);
         bundle.putIntArray("colors", this.mColors);

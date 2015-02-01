@@ -23,12 +23,9 @@ import java.util.List;
 /**
  * Created by chocho on 2015-01-25.
  */
-public class EventActivity extends FragmentActivity {
+public class EventActivity extends FragmentActivity{
+    Context context = this;
     DatabaseHandler db = new DatabaseHandler(this);
-
-    ArrayList<String> ageList = new ArrayList<String>();
-    ArrayList<String> scoreList = new ArrayList<String>();
-    ArrayList<String> categoryList = new ArrayList<String>();
 
     EditText event_edit;
     ImageButton event_add_cate;
@@ -104,6 +101,13 @@ public class EventActivity extends FragmentActivity {
         event_add_cate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                colorPickerDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface $dialog) {
+                        Log.w("DISMISS LISTENER", "dismissed");
+                        ColorPickerDialog dialog = (ColorPickerDialog) $dialog;
+                    }
+                });
                 colorPickerDialog.show(getSupportFragmentManager(), "colorpicker");
             }
         });
@@ -141,6 +145,9 @@ public class EventActivity extends FragmentActivity {
     }
 
     public void fillSpinners() {
+        ArrayList<String> ageList = new ArrayList<String>();
+        ArrayList<String> scoreList = new ArrayList<String>();
+        ArrayList<String> categoryList = new ArrayList<String>();
         for (int i = 0; i<=100; i++) {
             ageList.add(Integer.toString(i));
         }
@@ -199,7 +206,24 @@ public class EventActivity extends FragmentActivity {
 
             Log.w("EDIT REQUEST", "for edit");
         }
+    }
 
+    public void updateCategorySpinner() {
+        ArrayList<String> categoryList = new ArrayList<String>();
+        List<Category> cates = db.getAllCategory();
 
+        Log.w("Read: ", "Read all categories");
+        for (Category cate : cates) {
+            String log = "ID: "+cate.getID()+" ,Name: " + cate.getName();
+            Log.w("Name: ", log);
+
+            if (!cate.getName().equals("기타"))
+                categoryList.add(cate.getName());
+
+        }
+        categoryList.add("기타");
+        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<String>(EventActivity.this, android.R.layout.simple_spinner_item, categoryList);
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        category_spinner.setAdapter(categoryAdapter);
     }
 }
