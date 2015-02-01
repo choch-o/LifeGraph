@@ -1,7 +1,12 @@
 package com.example.chocho.lifegraph;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -18,7 +23,7 @@ import java.util.List;
 /**
  * Created by chocho on 2015-01-25.
  */
-public class EventActivity extends Activity {
+public class EventActivity extends FragmentActivity {
     DatabaseHandler db = new DatabaseHandler(this);
 
     ArrayList<String> ageList = new ArrayList<String>();
@@ -121,14 +126,23 @@ public class EventActivity extends Activity {
             }
         });
         */
+        final ColorPickerDialog colorPickerDialog = new ColorPickerDialog();
+        colorPickerDialog.initialize(R.string.dialog_title, new int[]{Color.CYAN, Color.LTGRAY, Color.BLACK, Color.BLUE, Color.GREEN, Color.MAGENTA, Color.RED, Color.GRAY, Color.YELLOW}, Color.YELLOW, 3, 2);
+        colorPickerDialog.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener() {
+            @Override
+            public void onColorSelected(int color) {
+                //Toast.makeText(EventActivity.this, "selectedColor : " + color, Toast.LENGTH_SHORT).show();
+            }
+        });
         event_add_cate = (ImageButton) findViewById(R.id.event_add_cate);
         event_add_cate.setBackground(null);
         event_add_cate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                colorPickerDialog.show(getSupportFragmentManager(), "colorpicker");
             }
         });
+
         event_done = (Button) findViewById(R.id.event_done);
         event_done.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -3,7 +3,7 @@
     android:id="@+id/main_dialog_container"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp">
+    android:padding="20dp">
 
     <TextView
         android:id="@+id/main_dialog_text"
@@ -13,7 +13,8 @@
     <EditText
         android:id="@+id/main_dialog_edit"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
 
         <requestFocus />
     </EditText>
