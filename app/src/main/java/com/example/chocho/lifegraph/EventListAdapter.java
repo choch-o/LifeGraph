@@ -2,6 +2,7 @@ package com.example.chocho.lifegraph;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,10 +16,10 @@ import java.util.ArrayList;
  */
 public class EventListAdapter extends ArrayAdapter<Event> {
     Context context;
-    int layoutResourceId;
+    int tPos, layoutResourceId;
     ArrayList<Event> data=new ArrayList<Event>();
 
-    public EventListAdapter(Context context, int layoutResourceId, ArrayList<Event> data)
+    public EventListAdapter(Context context, int layoutResourceId, ArrayList<Event> data, int tPos)
     {
         super(context, layoutResourceId, data);
 
@@ -26,6 +27,7 @@ public class EventListAdapter extends ArrayAdapter<Event> {
         this.layoutResourceId = layoutResourceId;
         this.context = context;
         this.data = data;
+        this.tPos = tPos;
     }
 
     @Override
@@ -42,6 +44,17 @@ public class EventListAdapter extends ArrayAdapter<Event> {
             row.setTag(holder);
         }
         else holder = (TextHolder)row.getTag();
+
+        if(tPos != -1 && position == tPos)
+        {
+            holder.txtTitle.setBackgroundColor(Color.parseColor("#777777"));
+            holder.txtTitle.setTextColor(Color.WHITE);
+        }
+        else
+        {
+            holder.txtTitle.setBackgroundColor(Color.WHITE);
+            holder.txtTitle.setTextColor(Color.BLACK);
+        }
 
         Event event = data.get(position);
         holder.txtTitle.setText(event.getEventName());

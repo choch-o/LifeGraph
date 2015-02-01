@@ -481,7 +481,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_COLOR, cate.getColor());
 
         // updating row
-        return db.update(TABLE_GRAPH, values, KEY_ID + " = ?",
+        return db.update(TABLE_CATEGORY, values, KEY_ID + " = ?",
                 new String[] { String.valueOf(cate.getID()) });
     }
 
@@ -489,9 +489,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void deleteCategory(long cate_id) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        db.delete(TABLE_GRAPH, KEY_ID + " = ?",
+        db.delete(TABLE_CATEGORY, KEY_ID + " = ?",
                 new String[]{String.valueOf(cate_id)});
         //db.close();
+
     }
     // closing database
     public void closeDB() {

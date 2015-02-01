@@ -20,7 +20,7 @@ import java.util.List;
  * Created by chocho on 2015-01-25.
  */
 public class ListActivity extends Activity implements View.OnClickListener {
-    int tPos = 0;
+    int tPos = -1;
 
     final Context context = this;
     DatabaseHandler db = new DatabaseHandler(this);
@@ -29,7 +29,6 @@ public class ListActivity extends Activity implements View.OnClickListener {
     List<Event> events;
 
     long graphID;
-    int isCheck = 0;
     ImageButton delButton, editButton;
 
     @Override
@@ -58,7 +57,7 @@ public class ListActivity extends Activity implements View.OnClickListener {
         for(Event event : events) eventArry.add(event);
 
         ListView eventList = (ListView) findViewById(R.id.eventListView);
-        adapter = new EventListAdapter(this, R.layout.event_list, eventArry);
+        adapter = new EventListAdapter(this, R.layout.event_list, eventArry, tPos);
         eventList.setAdapter(adapter);
         eventList.setOnItemClickListener(mItemClickListener);
     }
@@ -66,39 +65,14 @@ public class ListActivity extends Activity implements View.OnClickListener {
     AdapterView.OnItemClickListener mItemClickListener = new AdapterView.OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             tPos = position;
-            Log.w("eventID - ", toString().valueOf(events.get(tPos).getID()));
+            initializeList();
 
-            if(isCheck == 2)
-            {
-                Intent intent = new Intent(context, EventActivity.class);
-                intent.putExtra("eventID", events.get(tPos).getID());
-                startActivityForResult(intent, 1);
-            }
-            else if(isCheck == 1)
-            {
-                final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-
-                alertDialogBuilder.setTitle("정말 삭제하시겠습니까?");
-
-                alertDialogBuilder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        db.deleteEvent(events.get(tPos).getID());
-                        initializeList();
-                    }
-                });
-
-                alertDialogBuilder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-
-                alertDialogBuilder.create().show();
-            }
+            Log.w("eventID - ", toString().valueOf(events.get(tPos).getID()));;
         }
     };
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        tPos = -1;
         initializeList();
     }
 
@@ -106,10 +80,35 @@ public class ListActivity extends Activity implements View.OnClickListener {
     {
         switch (v.getId()) {
             case R.id.delButton:
-                isCheck = 1;
+                if(tPos != -1)
+                {
+                    final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+
+                    alertDialogBuilder.setTitle("정말 삭제하시겠습니까?");
+
+                    alertDialogBuilder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            db.deleteEvent(events.get(tPos).getID());
+                            tPos = -1;
+                            initializeList();
+                        }
+                    });
+
+                    alertDialogBuilder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    alertDialogBuilder.create().show();
+                }
                 break;
             case R.id.editButton:
-                isCheck = 2;
+                if(tPos != -1) {
+                    Intent intent = new Intent(context, EventActivity.class);
+                    intent.putExtra("eventID", (long)events.get(tPos).getID());
+                    startActivityForResult(intent, 1);
+                }
                 break;
         }
     }

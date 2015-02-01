@@ -2,6 +2,7 @@ package com.example.chocho.lifegraph;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Notification;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -25,8 +26,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.io.ByteArrayOutputStream;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -38,6 +41,7 @@ import java.util.List;
  */
 public class GraphActivity extends Activity implements View.OnClickListener
 {
+    boolean isDraw = false;
     int temp = 0;
     long graphID;
     final Context context = this;
@@ -49,8 +53,6 @@ public class GraphActivity extends Activity implements View.OnClickListener
     Intent intent;
     axis view = null;
     axis tView = null;
-    Bitmap allBitmap;
-    ImageView imageView;
     FrameLayout framelayout;
     ImageButton graphAddButton, moveToListButton, categoryListButton;
 
@@ -74,7 +76,6 @@ public class GraphActivity extends Activity implements View.OnClickListener
         setContentView(R.layout.activity_graph);
 
         graphID = getIntent().getLongExtra("graphID", 0);
-        Log.w("graphID(graph) - ", toString().valueOf(graphID));
 
         //Active Button
         graphAddButton = (ImageButton) findViewById(R.id.graphAddButton);
@@ -94,8 +95,14 @@ public class GraphActivity extends Activity implements View.OnClickListener
         framelayout = (FrameLayout) findViewById(R.id.graphContainer);
         view = new axis(getApplicationContext());
         framelayout.addView(view);
-        //getBitmap();
-        //saveGraph();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus)
+    {
+        width = view.getWidth();
+        height = view.getHeight();
+        saveGraph();
     }
 
     public void initializeEvent() {
@@ -130,6 +137,8 @@ public class GraphActivity extends Activity implements View.OnClickListener
 
     void saveGraph()
     {
+        getBitmap();
+
         Bitmap tBitmap;
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         String name, date;
@@ -153,7 +162,7 @@ public class GraphActivity extends Activity implements View.OnClickListener
         paint.setColor(Color.parseColor("#FFFFFF"));
 
         tView = new axis(getApplicationContext());
-        bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+        bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         canvas.drawRect(0,0,width,height,paint);
         tView.draw(canvas);
@@ -163,7 +172,6 @@ public class GraphActivity extends Activity implements View.OnClickListener
     public void onBackPressed() {
         Bitmap tBitmap;
 
-        /*getBitmap();
         saveGraph();
         tBitmap = bitmap;
 
@@ -171,7 +179,7 @@ public class GraphActivity extends Activity implements View.OnClickListener
         try {
             FileOutputStream fos = new FileOutputStream(new File("/mnt/sdcard/", db.getGraph((int)graphID).getName() + ".png"));
             tBitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
-        } catch (FileNotFoundException e) { e.printStackTrace(); }*/
+        } catch (FileNotFoundException e) { e.printStackTrace(); }
 
 
         finish();
@@ -212,13 +220,11 @@ public class GraphActivity extends Activity implements View.OnClickListener
                 case R.id.categoryListButton:
                     AlertDialog.Builder builder = new AlertDialog.Builder(GraphActivity.this);
 
-                    Log.w("list", " a");
                     for (int i = 0; i < itemSize; i++) {
                         if (mSelectedItmes.contains(i)) myCheck[i] = true;
                         else myCheck[i] = false;
                     }
                     mTempSelectedItmes = mSelectedItmes;
-                    Log.w("list", " b");
 
                     builder.setTitle(R.string.category)
                             .setMultiChoiceItems(categoryList, myCheck,
@@ -239,14 +245,13 @@ public class GraphActivity extends Activity implements View.OnClickListener
                                     framelayout.removeView(view);
                                     view = new axis(getApplicationContext());
                                     framelayout.addView(view);
-                                    //getBitmap();
-                                    //saveGraph();
+                                    saveGraph();
                                 }
                             })
                             .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int id) {
-                                    //
+                                    ///////////////
                                 }
                             });
 
@@ -265,8 +270,7 @@ public class GraphActivity extends Activity implements View.OnClickListener
         framelayout.removeView(view);
         view = new axis(getApplicationContext());
         framelayout.addView(view);
-        //getBitmap();
-        //saveGraph();
+        saveGraph();
     }
 
     private class ListViewItemClickListener implements AdapterView.OnItemClickListener
@@ -304,14 +308,17 @@ public class GraphActivity extends Activity implements View.OnClickListener
         private ScaleGestureDetector mScaleDetector;
         private float mScaleFactor = 1.f;
 
-        int px, py;
+        int cnt = 0;
+        float px, py;
         int red = 0, green = 0, blue = 0;
         int circleRadius = 10;
+        Paint pText = new Paint();
         Paint pLine = new Paint();
         Paint pCircle = new Paint();
         float[] linePoint = new float[4];
         int[][] eventTable = new int[itemSize][eventSize];
         int[] cntTable = new int[itemSize];
+        int[] allEventTable = new int[eventSize];
 
         public axis(Context context)
         {
@@ -324,8 +331,7 @@ public class GraphActivity extends Activity implements View.OnClickListener
         @Override
         public void onDraw(Canvas canvas)
         {
-            width = framelayout.getMeasuredWidth();
-            height = framelayout.getMeasuredHeight();
+            TextView textView;
 
             canvas.save();
             canvas.translate(mPosX, mPosY);
@@ -337,9 +343,9 @@ public class GraphActivity extends Activity implements View.OnClickListener
             }
 
             px = (int) TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP,  15, getApplicationContext().getResources().getDisplayMetrics());
+                    TypedValue.COMPLEX_UNIT_DIP,  20, getApplicationContext().getResources().getDisplayMetrics());
             py = (int) TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP,  15, getApplicationContext().getResources().getDisplayMetrics());
+                    TypedValue.COMPLEX_UNIT_DIP,  20, getApplicationContext().getResources().getDisplayMetrics());
 
             pLine.setColor(Color.parseColor("#d9d9d9"));
             pLine.setStrokeWidth(3);
@@ -348,22 +354,31 @@ public class GraphActivity extends Activity implements View.OnClickListener
             canvas.drawLine(px, py, px, height - py, pLine);
             canvas.drawLine(px, (int)(height / 2), width - px, (int)(height / 2), pLine);
 
+            pText.setColor(Color.BLACK);
+            pText.setTextSize(20);
+            pText.setTextAlign(Paint.Align.CENTER);
+            for(int i = 10 ; i >= -10 ; i --) canvas.drawText(String.valueOf(i), px / 2, 10 + py + (height - py * 2) / 20 * (10 - i), pText);
+            for(int i = 5 ; i <= 100 ; i = i + 5) canvas.drawText(String.valueOf(i), px + (width - px * 2) / 100 * i, (int)(height / 2) + 15, pText);
+
             //draw Graph
-            int x, y, x2 = 0, y2 = 0;
+            float x, y, x2 = 0, y2 = 0;
+            boolean isC = false;
 
             pCircle.setStyle(Paint.Style.STROKE);
             pCircle.setStrokeWidth(circleRadius / 2);
             for(int i = 0 ; i < itemSize; i ++ )
             {
-                if(myCheck[(i - 1 + itemSize) % itemSize])
+                if(myCheck[i])
                 {
                     /////////////////////////////////////////////////////////////////////////////////////////
                     //Category Color
+                    if(i == (itemSize - 1)) getRGB(db.getCategory(1).getColor());
+                    else getRGB(db.getCategory(i + 2).getColor());
+
                     pLine.setStrokeWidth(circleRadius / 2);
-                    Log.w("category : color ->", db.getCategory(i + 1).getName() + " : " + db.getCategory(i + 1).getColor());
-                    getRGB(db.getCategory(i).getColor());
                     pLine.setColor(Color.rgb(red, green, blue));
                     pCircle.setColor(Color.rgb(red, green, blue));
+
                     for(int j = 0 ; j < cntTable[i] ; j ++)
                     {
                         Event tEv = eventArry.get(eventTable[i][j]);
@@ -385,8 +400,40 @@ public class GraphActivity extends Activity implements View.OnClickListener
                         x2 = x;
                         y2 = y;
                     }
+                    isC = true;
                 }
             }
+
+            if(isC == false)
+            {
+                pLine.setStrokeWidth(circleRadius / 2);
+                pLine.setColor(Color.rgb(0, 204, 255));
+                pCircle.setColor(Color.rgb(0, 204, 255));
+
+                for(int i = 0 ; i < cnt ; i ++)
+                {
+                    Event tEv = eventArry.get(allEventTable[i]);
+                    int age = tEv._age;
+                    int score = tEv._score;
+
+                    //Draw Circle
+                    x = px + (width - px * 2) / 100 * age;
+                    y = py + (height - py * 2) / 20 * (10 - score);
+                    canvas.drawCircle(x, y, circleRadius, pCircle);
+
+                    //Draw Line
+                    if(i > 0)
+                    {
+                        getPoint(x, y, x2, y2);
+                        canvas.drawLine(linePoint[0], linePoint[1], linePoint[2], linePoint[3], pLine);
+                    }
+
+                    x2 = x;
+                    y2 = y;
+                }
+            }
+
+            isDraw = true;
 
             super.onDraw(canvas);
             canvas.restore();
@@ -394,12 +441,12 @@ public class GraphActivity extends Activity implements View.OnClickListener
 
         void getRGB(String strC)
         {
-            red = Integer.valueOf(strC.substring(1,2), 16);
-            green = Integer.valueOf(strC.substring(3,4), 16);
-            blue = Integer.valueOf(strC.substring(5,6), 16);
+            red = Integer.valueOf(strC.substring(1,3), 16);
+            green = Integer.valueOf(strC.substring(3,5), 16);
+            blue = Integer.valueOf(strC.substring(5,7), 16);
         }
 
-        void getPoint(int x, int y, int x2, int y2) {
+        void getPoint(float x, float y, float x2, float y2) {
             float dist;
 
             dist = (x2 - x) * (x2 - x) + (y2 - y) * (y2 - y);
@@ -424,12 +471,15 @@ public class GraphActivity extends Activity implements View.OnClickListener
             int tmp;
             Event tEv, tEv2;
 
-            for(int i = 0 ; i < eventSize ; i ++)
-            {
+            for(int i = 0 ; i < eventSize ; i ++) {
                 tEv = eventArry.get(i);
                 int category = getId(tEv.getCategory());
 
-                if(category != -1) eventTable[category][cntTable[category] ++] = i;
+                if (category != -1)
+                {
+                    eventTable[category][cntTable[category] ++] = i;
+                    allEventTable[cnt ++] = i;
+                }
             }
 
             for(int i = 0 ; i < itemSize ; i ++ ) {
@@ -440,12 +490,28 @@ public class GraphActivity extends Activity implements View.OnClickListener
                         tEv = eventArry.get(eventTable[i][j]);
                         tEv2 = eventArry.get(eventTable[i][k]);
 
-                        if(tEv._age > tEv2._age)
+                        if(tEv._age > tEv2._age ||(tEv._age == tEv2._age && tEv._score > tEv2._score))
                         {
                             tmp = eventTable[i][j];
                             eventTable[i][j] = eventTable[i][k];
                             eventTable[i][k] = tmp;
                         }
+                    }
+                }
+            }
+
+            for(int j = 0 ; j < cnt ; j ++)
+            {
+                for(int k = j + 1 ; k < cnt ; k ++)
+                {
+                    tEv = eventArry.get(allEventTable[j]);
+                    tEv2 = eventArry.get(allEventTable[k]);
+
+                    if(tEv._age > tEv2._age ||(tEv._age == tEv2._age && tEv._score > tEv2._score))
+                    {
+                        tmp = allEventTable[j];
+                        allEventTable[j] = allEventTable[k];
+                        allEventTable[k] = tmp;
                     }
                 }
             }
