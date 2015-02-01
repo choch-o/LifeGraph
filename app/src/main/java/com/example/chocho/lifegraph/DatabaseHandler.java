@@ -74,11 +74,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_CATEGORY = "CREATE TABLE " + TABLE_CATEGORY + "("
             + KEY_ID + " INTEGER PRIMARY KEY," + KEY_CATE_NAME + " TEXT," + KEY_COLOR + " TEXT" + ")";
     private static final String INSERT_DEFAULT_CATE_1 = "INSERT INTO " + TABLE_CATEGORY + "(" + KEY_ID + "," + KEY_CATE_NAME + "," + KEY_COLOR
-            + ") VALUES(1, '학업', '#FF3399')";
+            + ") VALUES(1, '기타', '#000000')";
     private static final String INSERT_DEFAULT_CATE_2 = "INSERT INTO " + TABLE_CATEGORY + "(" + KEY_ID + "," + KEY_CATE_NAME + "," + KEY_COLOR
-            + ") VALUES(2, '여행', '#00CCFF')";
+            + ") VALUES(2, '학업', '#FF3399')";
     private static final String INSERT_DEFAULT_CATE_3 = "INSERT INTO " + TABLE_CATEGORY + "(" + KEY_ID + "," + KEY_CATE_NAME + "," + KEY_COLOR
-            + ") VALUES(3, '만남', '#00FF00')";
+            + ") VALUES(3, '여행', '#00CCFF')";
+    private static final String INSERT_DEFAULT_CATE_4 = "INSERT INTO " + TABLE_CATEGORY + "(" + KEY_ID + "," + KEY_CATE_NAME + "," + KEY_COLOR
+            + ") VALUES(4, '만남', '#00FF00')";
 
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -94,6 +96,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(INSERT_DEFAULT_CATE_1);
         db.execSQL(INSERT_DEFAULT_CATE_2);
         db.execSQL(INSERT_DEFAULT_CATE_3);
+        db.execSQL(INSERT_DEFAULT_CATE_4);
     }
 
     // Upgrading database
@@ -232,6 +235,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      */
     public int getEventCount() {
         String countQuery = "SELECT * FROM " + TABLE_EVENT;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+
+        int count = cursor.getCount();
+        cursor.close();
+
+        // return count
+        return count;
+    }
+
+    /**
+     * getting category count
+     */
+    public int getCategoryCount() {
+        String countQuery = "SELECT * FROM " + TABLE_CATEGORY;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
 
@@ -422,7 +440,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         if (cursor != null)
             cursor.moveToFirst();
 
-        Category categ= new Category(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(1));
+        Category categ= new Category(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2));
 
         return categ;
     }

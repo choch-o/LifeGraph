@@ -26,54 +26,13 @@
         android:layout_alignParentRight="true"
         />
 
-    <ScrollView
+    <ListView
+        android:id="@+id/eventListView"
         android:layout_below="@id/delButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
-        <LinearLayout
-            android:layout_gravity="center_horizontal"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
 
-            <ImageView
-                android:padding="10dp"
-                android:src="@drawable/white_rect"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/activity_event_list_height"/>
-
-            <ImageView
-                android:padding="10dp"
-                android:src="@drawable/white_rect"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/activity_event_list_height"/>
-
-            <ImageView
-                android:padding="10dp"
-                android:src="@drawable/white_rect"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/activity_event_list_height"/>
-
-            <ImageView
-                android:padding="10dp"
-                android:src="@drawable/white_rect"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/activity_event_list_height"/>
-
-            <ImageView
-                android:padding="10dp"
-                android:src="@drawable/white_rect"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/activity_event_list_height"/>
-
-            <ImageView
-                android:padding="10dp"
-                android:src="@drawable/white_rect"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/activity_event_list_height"/>
-
-            </LinearLayout>
-    </ScrollView>
+    </ListView>
 
 </RelativeLayout>

@@ -26,51 +26,31 @@
         android:layout_alignParentRight="true"
         />
 
-    <ScrollView
-        android:layout_below="@id/cDelButton"
+    <ImageButton
+        android:id="@+id/addBox"
+        android:padding="10dp"
+        android:layout_below="@id/cEditButton"
+        android:src="@drawable/white_rect"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/activity_event_list_height"/>
+
+    <ImageView
+        android:id="@+id/addIcon"
+        android:src="@drawable/add_icon"
+        android:layout_alignBottom="@id/addBox"
+        android:layout_alignTop="@id/addBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        />
+
+    <ListView
+        android:id="@+id/categoryListView"
+        android:layout_below="@id/addBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
-        <RelativeLayout
-            android:layout_gravity="center_horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/list1"
-                android:layout_alignParentTop="true"
-                android:padding="10dp"
-                android:src="@drawable/white_rect"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/activity_event_list_height"/>
-
-            <ImageView
-                android:id="@+id/list2"
-                android:layout_below="@id/list1"
-                android:padding="10dp"
-                android:src="@drawable/white_rect"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/activity_event_list_height"/>
-
-            <ImageView
-                android:layout_below="@id/list2"
-                android:id="@+id/addBox"
-                android:padding="10dp"
-                android:src="@drawable/white_rect"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/activity_event_list_height"/>
-
-            <ImageView
-                android:id="@+id/addIcon"
-                android:src="@drawable/add_icon"
-                android:layout_alignTop="@id/addBox"
-                android:layout_alignBottom="@id/addBox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                />
-
-        </RelativeLayout>
-    </ScrollView>
+    </ListView>
 
 </RelativeLayout>

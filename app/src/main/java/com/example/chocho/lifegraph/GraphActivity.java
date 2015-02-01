@@ -26,6 +26,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -37,7 +38,13 @@ import java.util.List;
  */
 public class GraphActivity extends Activity implements View.OnClickListener
 {
+    int temp = 0;
     long graphID;
+    final Context context = this;
+    DatabaseHandler db = new DatabaseHandler(this);
+    List<Event> eventArry;
+    List<Category> categoryArry;
+    Bitmap bitmap;
 
     Intent intent;
     axis view = null;
@@ -47,13 +54,14 @@ public class GraphActivity extends Activity implements View.OnClickListener
     FrameLayout framelayout;
     ImageButton graphAddButton, moveToListButton, categoryListButton;
 
-    int itemSize = 5;
+    int itemSize;
+    int eventSize = 0;
     int width, height;
     boolean isCheck = false;
-    boolean[] myCheck = new boolean[itemSize];
-    CharSequence[] asdf = new CharSequence[itemSize];
-    List<Integer> mSelectedItmes = new ArrayList<Integer>();
-    List<Integer> mTempSelectedItmes = new ArrayList<Integer>();
+    boolean[] myCheck;
+    CharSequence[] categoryList;
+    List<Integer> mSelectedItmes;
+    List<Integer> mTempSelectedItmes;
 
     //Fade in, out
     Animation animFadeIn;
@@ -66,6 +74,7 @@ public class GraphActivity extends Activity implements View.OnClickListener
         setContentView(R.layout.activity_graph);
 
         graphID = getIntent().getLongExtra("graphID", 0);
+        Log.w("graphID(graph) - ", toString().valueOf(graphID));
 
         //Active Button
         graphAddButton = (ImageButton) findViewById(R.id.graphAddButton);
@@ -78,21 +87,65 @@ public class GraphActivity extends Activity implements View.OnClickListener
         moveToListButton.setOnClickListener(this);
         categoryListButton.setOnClickListener(this);
 
+        initializeEvent();
+        initializeCategory();
+
         //Draw Point, Line
         framelayout = (FrameLayout) findViewById(R.id.graphContainer);
         view = new axis(getApplicationContext());
         framelayout.addView(view);
-
-        //Category List
-        asdf[0] = "학업";
-        asdf[1] = "여행";
-        asdf[2] = "만남";
-        asdf[3] = "기타";
-        asdf[4] = "기타1";
+        //getBitmap();
+        //saveGraph();
     }
 
-    @Override
-    public void onBackPressed() {
+    public void initializeEvent() {
+        eventArry = db.getAllEventsByGraph(db.getGraph((int)graphID).getName());
+        eventSize = eventArry.size();
+    }
+
+    public void initializeCategory() {
+        int j = 0;
+        int chk = 0;
+        CharSequence tmp = null;
+
+        itemSize = db.getCategoryCount();
+        categoryArry = db.getAllCategory();
+
+        myCheck = new boolean[itemSize];
+        categoryList = new CharSequence[itemSize];
+        mSelectedItmes = new ArrayList<Integer>();
+        mTempSelectedItmes = new ArrayList<Integer>();
+        for(int i = 0 ; i < itemSize ; i ++) myCheck[i] = false;
+        for (Category cate : categoryArry)
+        {
+            if(chk == 0)
+            {
+                chk = 1;
+                tmp = cate.getName();
+            }
+            else categoryList[j ++] = cate.getName();
+        }
+        categoryList[j ++] = tmp;
+    }
+
+    void saveGraph()
+    {
+        Bitmap tBitmap;
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        String name, date;
+        Graph graph;
+        byte[] image;
+
+        tBitmap = bitmap;
+        name = db.getGraph((int)graphID).getName();
+        date = db.getGraph((int)graphID).getDate();
+        tBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        image = stream.toByteArray();
+        graph = new Graph((int)graphID, name, date, eventSize, image);
+        db.updateGraph(graph);
+    }
+
+    void getBitmap() {
         Paint paint = new Paint();
 
         //background
@@ -100,16 +153,25 @@ public class GraphActivity extends Activity implements View.OnClickListener
         paint.setColor(Color.parseColor("#FFFFFF"));
 
         tView = new axis(getApplicationContext());
-        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+        bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         canvas.drawRect(0,0,width,height,paint);
         tView.draw(canvas);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Bitmap tBitmap;
+
+        /*getBitmap();
+        saveGraph();
+        tBitmap = bitmap;
 
         //Save Image
         try {
-            FileOutputStream fos = new FileOutputStream(new File("/mnt/sdcard/DCIM/Camera/", "test.png"));
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
-        } catch (FileNotFoundException e) { e.printStackTrace(); }
+            FileOutputStream fos = new FileOutputStream(new File("/mnt/sdcard/", db.getGraph((int)graphID).getName() + ".png"));
+            tBitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+        } catch (FileNotFoundException e) { e.printStackTrace(); }*/
 
 
         finish();
@@ -118,7 +180,6 @@ public class GraphActivity extends Activity implements View.OnClickListener
     @Override
     public void onClick(View v) {
 
-        Log.w("Click - ", "in");
         if(isCheck == true) {
             graphAddButton.setVisibility(View.VISIBLE);
             moveToListButton.setVisibility(View.VISIBLE);
@@ -129,7 +190,7 @@ public class GraphActivity extends Activity implements View.OnClickListener
                 case R.id.graphAddButton:
                     intent = new Intent(this, EventActivity.class);
                     intent.putExtra("graphID", graphID);
-                    startActivity(intent);
+                    startActivityForResult(intent, 1);
 
                     break;
                 case R.id.moveToListButton:
@@ -151,14 +212,16 @@ public class GraphActivity extends Activity implements View.OnClickListener
                 case R.id.categoryListButton:
                     AlertDialog.Builder builder = new AlertDialog.Builder(GraphActivity.this);
 
+                    Log.w("list", " a");
                     for (int i = 0; i < itemSize; i++) {
                         if (mSelectedItmes.contains(i)) myCheck[i] = true;
                         else myCheck[i] = false;
                     }
                     mTempSelectedItmes = mSelectedItmes;
+                    Log.w("list", " b");
 
                     builder.setTitle(R.string.category)
-                            .setMultiChoiceItems(asdf, myCheck,
+                            .setMultiChoiceItems(categoryList, myCheck,
                                     new DialogInterface.OnMultiChoiceClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which,
@@ -172,6 +235,12 @@ public class GraphActivity extends Activity implements View.OnClickListener
                                 @Override
                                 public void onClick(DialogInterface dialog, int id) {
                                     mSelectedItmes = mTempSelectedItmes;
+
+                                    framelayout.removeView(view);
+                                    view = new axis(getApplicationContext());
+                                    framelayout.addView(view);
+                                    //getBitmap();
+                                    //saveGraph();
                                 }
                             })
                             .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -182,11 +251,22 @@ public class GraphActivity extends Activity implements View.OnClickListener
                             });
 
                     builder.create().show();
+
                     break;
 
             }
         }
-        Log.w("Click - ", "out");
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        initializeEvent();
+        if(requestCode == 2 || (requestCode == 1 && itemSize != db.getCategoryCount())) initializeCategory();
+
+        framelayout.removeView(view);
+        view = new axis(getApplicationContext());
+        framelayout.addView(view);
+        //getBitmap();
+        //saveGraph();
     }
 
     private class ListViewItemClickListener implements AdapterView.OnItemClickListener
@@ -197,12 +277,13 @@ public class GraphActivity extends Activity implements View.OnClickListener
             if(position == 0)
             {
                 intent = new Intent(GraphActivity.this, ListActivity.class);
-                startActivity(intent);
+                intent.putExtra("graphID", graphID);
+                startActivityForResult(intent, 1);
             }
             else if(position == 1)
             {
                 intent = new Intent(GraphActivity.this, CategoryListActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, 2);
             }
         }
     }
@@ -224,15 +305,19 @@ public class GraphActivity extends Activity implements View.OnClickListener
         private float mScaleFactor = 1.f;
 
         int px, py;
+        int red = 0, green = 0, blue = 0;
         int circleRadius = 10;
         Paint pLine = new Paint();
         Paint pCircle = new Paint();
-        float linePoint[] = new float[4];
+        float[] linePoint = new float[4];
+        int[][] eventTable = new int[itemSize][eventSize];
+        int[] cntTable = new int[itemSize];
 
         public axis(Context context)
         {
             super(context);
 
+            makeTable();
             mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         }
 
@@ -263,25 +348,55 @@ public class GraphActivity extends Activity implements View.OnClickListener
             canvas.drawLine(px, py, px, height - py, pLine);
             canvas.drawLine(px, (int)(height / 2), width - px, (int)(height / 2), pLine);
 
-            //point
-            int x, y, x2, y2;
+            //draw Graph
+            int x, y, x2 = 0, y2 = 0;
 
-            x = 500; y = 200;
-            x2 = 350; y2 = 450;
             pCircle.setStyle(Paint.Style.STROKE);
             pCircle.setStrokeWidth(circleRadius / 2);
-            pCircle.setColor(Color.parseColor("#FF3399"));
-            canvas.drawCircle(x, y, circleRadius, pCircle);
-            canvas.drawCircle(x2, y2, circleRadius, pCircle);
+            for(int i = 0 ; i < itemSize; i ++ )
+            {
+                if(myCheck[(i - 1 + itemSize) % itemSize])
+                {
+                    /////////////////////////////////////////////////////////////////////////////////////////
+                    //Category Color
+                    pLine.setStrokeWidth(circleRadius / 2);
+                    Log.w("category : color ->", db.getCategory(i + 1).getName() + " : " + db.getCategory(i + 1).getColor());
+                    getRGB(db.getCategory(i).getColor());
+                    pLine.setColor(Color.rgb(red, green, blue));
+                    pCircle.setColor(Color.rgb(red, green, blue));
+                    for(int j = 0 ; j < cntTable[i] ; j ++)
+                    {
+                        Event tEv = eventArry.get(eventTable[i][j]);
+                        int age = tEv._age;
+                        int score = tEv._score;
 
-            pLine.setColor(Color.parseColor("#FF3399"));
-            pLine.setStrokeWidth(circleRadius / 2);
+                        //Draw Circle
+                        x = px + (width - px * 2) / 100 * age;
+                        y = py + (height - py * 2) / 20 * (10 - score);
+                        canvas.drawCircle(x, y, circleRadius, pCircle);
 
-            getPoint(x, y, x2, y2);
-            canvas.drawLine(linePoint[0], linePoint[1], linePoint[2], linePoint[3], pLine);
+                        //Draw Line
+                        if(j > 0)
+                        {
+                            getPoint(x, y, x2, y2);
+                            canvas.drawLine(linePoint[0], linePoint[1], linePoint[2], linePoint[3], pLine);
+                        }
+
+                        x2 = x;
+                        y2 = y;
+                    }
+                }
+            }
 
             super.onDraw(canvas);
             canvas.restore();
+        }
+
+        void getRGB(String strC)
+        {
+            red = Integer.valueOf(strC.substring(1,2), 16);
+            green = Integer.valueOf(strC.substring(3,4), 16);
+            blue = Integer.valueOf(strC.substring(5,6), 16);
         }
 
         void getPoint(int x, int y, int x2, int y2) {
@@ -296,11 +411,50 @@ public class GraphActivity extends Activity implements View.OnClickListener
             linePoint[3] = y2 - ((y2 - y) * circleRadius / dist);
         }
 
+        int getId(String categoryName) {
+            for(int i = 0 ; i < itemSize ; i ++)
+            {
+                if(categoryName.equals(categoryList[i].toString())) return i;
+            }
+            return -1;
+        }
+
+        void makeTable()
+        {
+            int tmp;
+            Event tEv, tEv2;
+
+            for(int i = 0 ; i < eventSize ; i ++)
+            {
+                tEv = eventArry.get(i);
+                int category = getId(tEv.getCategory());
+
+                if(category != -1) eventTable[category][cntTable[category] ++] = i;
+            }
+
+            for(int i = 0 ; i < itemSize ; i ++ ) {
+                for(int j = 0 ; j < cntTable[i] ; j ++)
+                {
+                    for(int k = j + 1 ; k < cntTable[i] ; k ++)
+                    {
+                        tEv = eventArry.get(eventTable[i][j]);
+                        tEv2 = eventArry.get(eventTable[i][k]);
+
+                        if(tEv._age > tEv2._age)
+                        {
+                            tmp = eventTable[i][j];
+                            eventTable[i][j] = eventTable[i][k];
+                            eventTable[i][k] = tmp;
+                        }
+                    }
+                }
+            }
+        }
+
         @Override
         public boolean onTouchEvent(MotionEvent ev) {
             int action = ev.getAction();
 
-            //Log.w("Touch - ", "in");
             mScaleDetector.onTouchEvent(ev);
 
             switch (action & MotionEvent.ACTION_MASK) {
@@ -355,7 +509,6 @@ public class GraphActivity extends Activity implements View.OnClickListener
                     break;
                 }
                 case MotionEvent.ACTION_MOVE: {
-                    Log.w("in", " ");
 
                     // Only move if the ScaleGestureDetector isn't processing a gesture.
                     final boolean isIn = mScaleDetector.isInProgress();
@@ -364,7 +517,6 @@ public class GraphActivity extends Activity implements View.OnClickListener
 
                     if(!isIn)
                     {
-                        Log.w("move", " ");
                         final int pointerIndex = ev.findPointerIndex(mActivePointerId);
                         final float x = ev.getX(pointerIndex);
                         final float y = ev.getY(pointerIndex);
@@ -377,9 +529,6 @@ public class GraphActivity extends Activity implements View.OnClickListener
                         rightBottomX = leftTopX + tWidth;
                         rightBottomY = leftTopY + tHeight;
 
-                        Log.w("leftTopX - ", toString().valueOf(leftTopX));
-                        Log.w("rightBottomX - ", toString().valueOf(rightBottomX));
-                        Log.w("dx - ", toString().valueOf(dx) + "(width - " + toString().valueOf(width) + ")");
                         if((leftTopX < 0 && dx < 0) || (rightBottomX > width && dx > 0) || (leftTopX >= 0 && rightBottomX <= width)) mPosX += dx;
                         if((leftTopY < 0 && dy < 0) || (rightBottomY > height && dy > 0) || (leftTopY >= 0 && rightBottomY <= height)) mPosY += dy;
 
@@ -390,7 +539,6 @@ public class GraphActivity extends Activity implements View.OnClickListener
                     }
                     else
                     {
-                        Log.w("zoom", " ");
                         final float gx = mScaleDetector.getFocusX();
                         final float gy = mScaleDetector.getFocusY();
 
@@ -402,9 +550,6 @@ public class GraphActivity extends Activity implements View.OnClickListener
                         rightBottomX = leftTopX + tWidth;
                         rightBottomY = leftTopY + tHeight;
 
-                        Log.w("leftTopX - ", toString().valueOf(leftTopX));
-                        Log.w("rightBottomX - ", toString().valueOf(rightBottomX));
-                        //Log.w("dx - ", toString().valueOf(dx) + "(width - " + toString().valueOf(width) + ")");
                         if((leftTopX < 0 && gdx < 0) || (rightBottomX > width && gdx > 0) || (leftTopX >= 0 && rightBottomX <= width)) mPosX += gdx;
                         if((leftTopY < 0 && gdy < 0) || (rightBottomY > height && gdy > 0) || (leftTopY >= 0 && rightBottomY <= height)) mPosY += gdy;
 
@@ -455,7 +600,6 @@ public class GraphActivity extends Activity implements View.OnClickListener
 
             }
 
-            //Log.w("Touch - ", "out");
             final float posX = ev.getX();
             final float posY = ev.getY();
 
