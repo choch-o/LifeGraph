@@ -2,7 +2,7 @@ package com.example.chocho.lifegraph;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Notification;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,7 +24,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -41,6 +40,7 @@ import java.util.List;
  */
 public class GraphActivity extends Activity implements View.OnClickListener
 {
+    Dialog dialogList;
     boolean isDraw = false;
     int temp = 0;
     long graphID;
@@ -181,7 +181,6 @@ public class GraphActivity extends Activity implements View.OnClickListener
             tBitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
         } catch (FileNotFoundException e) { e.printStackTrace(); }
 
-        setResult(2);
         finish();
     }
 
@@ -198,7 +197,7 @@ public class GraphActivity extends Activity implements View.OnClickListener
                 case R.id.graphAddButton:
                     intent = new Intent(this, EventActivity.class);
                     intent.putExtra("graphID", graphID);
-                    startActivityForResult(intent, 1);
+                    startActivityForResult(intent, 3);
 
                     break;
                 case R.id.moveToListButton:
@@ -212,7 +211,9 @@ public class GraphActivity extends Activity implements View.OnClickListener
                     ListView lv = (ListView) convertView.findViewById(R.id.graphListView);
                     ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,items);
                     lv.setAdapter(adapter);
-                    alertDialog.show();
+                    dialogList=alertDialog.create();
+                    dialogList.setCanceledOnTouchOutside(true);
+                    dialogList.show();
 
                     lv.setOnItemClickListener(new ListViewItemClickListener() );
 
@@ -255,7 +256,9 @@ public class GraphActivity extends Activity implements View.OnClickListener
                                 }
                             });
 
-                    builder.create().show();
+                    dialogList = builder.create();
+                    dialogList.setCanceledOnTouchOutside(true);
+                    dialogList.show();
 
                     break;
 
@@ -265,12 +268,14 @@ public class GraphActivity extends Activity implements View.OnClickListener
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         initializeEvent();
-        if(requestCode == 2 || (requestCode == 1 && itemSize != db.getCategoryCount())) initializeCategory();
+        if(requestCode == 2 || ((requestCode == 1 || requestCode == 3) && itemSize != db.getCategoryCount())) initializeCategory();
 
         framelayout.removeView(view);
         view = new axis(getApplicationContext());
         framelayout.addView(view);
         saveGraph();
+
+        if(requestCode == 1 || requestCode == 2) dialogList.dismiss();
     }
 
     private class ListViewItemClickListener implements AdapterView.OnItemClickListener
