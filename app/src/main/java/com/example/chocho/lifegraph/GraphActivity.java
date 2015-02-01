@@ -181,7 +181,7 @@ public class GraphActivity extends Activity implements View.OnClickListener
             tBitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
         } catch (FileNotFoundException e) { e.printStackTrace(); }
 
-
+        setResult(2);
         finish();
     }
 

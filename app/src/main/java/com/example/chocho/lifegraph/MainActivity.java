@@ -51,7 +51,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             Log.w("onClick: ", "ID " + id);
             Intent intent = new Intent(context, GraphActivity.class);
             intent.putExtra("graphID", id+1);
-            startActivity(intent);
+            startActivityForResult(intent, 1);
         }
     };
     @Override
@@ -73,7 +73,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         long newGraphID = db.createGraph(new Graph(newTitle, null, 0, null));
                         Log.w("newGraphID", String.valueOf(newGraphID));
                         addIntent.putExtra("graphID", newGraphID);
-                        startActivity(addIntent);
+                        startActivityForResult(addIntent, 1);
                         showGraphs();
                     }
                 });
@@ -129,5 +129,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
         ListView graphList = (ListView) findViewById(R.id.main_listview);
         graphList.setAdapter(adapter);
         graphList.setOnItemClickListener(mItemClickListener);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == 1 && resultCode == 2) {
+            Log.w("GRAPH FINISHED", "entered");
+            showGraphs();
+        }
     }
 }
