@@ -36,65 +36,30 @@ public class EventActivity extends FragmentActivity {
     Button event_cancel;
 
     long graphID;
+    long eventID;
     Event event;
     String event_name;
     int age;
     int score;
     String category;
-
+    Spinner age_spinner;
+    Spinner score_spinner;
+    Spinner category_spinner;
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
 
-        graphID = getIntent().getLongExtra("graphID", 0);
-        Log.w("Event graph ID", String.valueOf(graphID));
         event_edit = (EditText) findViewById(R.id.event_edittext);
+        graphID = getIntent().getLongExtra("graphID", -1);
+        eventID = getIntent().getLongExtra("eventID", -1);
+        Log.w("Event graph ID", String.valueOf(graphID));
 
-        final Spinner age_spinner = (Spinner) findViewById(R.id.age_spinner);
-        final Spinner score_spinner = (Spinner) findViewById(R.id.score_spinner);
-        final Spinner category_spinner = (Spinner) findViewById(R.id.category_spinner);
-
-        for (int i = 0; i<=100; i++) {
-            ageList.add(Integer.toString(i));
-        }
-
-        for (int i = 10; i>=-10; i--) {
-            scoreList.add(Integer.toString(i));
-        }
-        /*
-        for (int i = 1; i<=10; i++) {
-            scoreList.add("-"+Integer.toString(i));
-        }*/
-
-        List<Category> cates = db.getAllCategory();
-
-        Log.w("Read: ", "Read all categories");
-        for (Category cate : cates) {
-            String log = "ID: "+cate.getID()+" ,Name: " + cate.getName();
-            Log.w("Name: ", log);
-
-            categoryList.add(cate.getName());
-
-        }
-        //categoryList.add("학업");
-        //categoryList.add("여행");
-        //categoryList.add("만남");
-
-        //Create the ArrayAdapter
-        ArrayAdapter<String> ageAdapter = new ArrayAdapter<String>(EventActivity.this, android.R.layout.simple_spinner_item, ageList);
-        ArrayAdapter<String> scoreAdapter = new ArrayAdapter<String>(EventActivity.this, android.R.layout.simple_spinner_item, scoreList);
-        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<String>(EventActivity.this, android.R.layout.simple_spinner_item, categoryList);
-
-        ageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        scoreAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        //Set the Adapter
-        age_spinner.setAdapter(ageAdapter);
-        score_spinner.setAdapter(scoreAdapter);
-        category_spinner.setAdapter(categoryAdapter);
+        age_spinner = (Spinner) findViewById(R.id.age_spinner);
+        score_spinner = (Spinner) findViewById(R.id.score_spinner);
+        category_spinner = (Spinner) findViewById(R.id.category_spinner);
+        fillSpinners();
 
         //Set the ClickListener for Spinner
         /*
@@ -152,10 +117,17 @@ public class EventActivity extends FragmentActivity {
                 score = Integer.valueOf(score_spinner.getSelectedItem().toString());
                 category = category_spinner.getSelectedItem().toString();
 
-                event = new Event(event_name, age, score, category);
-                Log.w("Event name", event.getEventName());
-                db.createEvent(event, graphID);
-                
+                if (graphID != -1) {
+                    event = new Event(event_name, age, score, category);
+                    Log.w("NEW EVENT", event.getEventName());
+                    db.createEvent(event, graphID);
+                }
+                else {
+                    Log.w("UPDATE", "update");
+                    event = new Event((int) eventID, event_name, age, score, category);
+                    //event = db.getEvent(eventID);
+                    db.updateEvent(event);
+                }
                 finish();
             }
         });
@@ -168,4 +140,66 @@ public class EventActivity extends FragmentActivity {
         });
     }
 
+    public void fillSpinners() {
+        for (int i = 0; i<=100; i++) {
+            ageList.add(Integer.toString(i));
+        }
+
+        for (int i = 10; i>=-10; i--) {
+            scoreList.add(Integer.toString(i));
+        }
+        /*
+        for (int i = 1; i<=10; i++) {
+            scoreList.add("-"+Integer.toString(i));
+        }*/
+
+        List<Category> cates = db.getAllCategory();
+
+        Log.w("Read: ", "Read all categories");
+        for (Category cate : cates) {
+            String log = "ID: "+cate.getID()+" ,Name: " + cate.getName();
+            Log.w("Name: ", log);
+
+            if (!cate.getName().equals("기타"))
+                categoryList.add(cate.getName());
+
+        }
+        categoryList.add("기타");
+
+        //Create the ArrayAdapter
+        ArrayAdapter<String> ageAdapter = new ArrayAdapter<String>(EventActivity.this, android.R.layout.simple_spinner_item, ageList);
+        ArrayAdapter<String> scoreAdapter = new ArrayAdapter<String>(EventActivity.this, android.R.layout.simple_spinner_item, scoreList);
+        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<String>(EventActivity.this, android.R.layout.simple_spinner_item, categoryList);
+
+        ageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        scoreAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        //Set the Adapter
+        age_spinner.setAdapter(ageAdapter);
+        score_spinner.setAdapter(scoreAdapter);
+        category_spinner.setAdapter(categoryAdapter);
+
+        if (eventID != -1) {
+            Event prev_event = db.getEvent(eventID);
+            String prev_event_name = prev_event.getEventName();
+            int prev_age = prev_event.getAge();
+            int prev_score = prev_event.getScore();
+            Log.w("EDITTED SCORE", String.valueOf(prev_score));
+            String prev_cate = prev_event.getCategory();
+
+            event_edit.setText(prev_event_name);
+            int age_position = ageAdapter.getPosition(String.valueOf(prev_age));
+            int score_position = scoreAdapter.getPosition(String.valueOf(prev_score));
+            int cate_position = categoryAdapter.getPosition(prev_cate);
+
+            age_spinner.setSelection(age_position);
+            score_spinner.setSelection(score_position);
+            category_spinner.setSelection(cate_position);
+
+            Log.w("EDIT REQUEST", "for edit");
+        }
+
+
+    }
 }

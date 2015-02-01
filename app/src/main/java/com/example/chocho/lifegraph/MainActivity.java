@@ -29,7 +29,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     final Context context = this;
     DatabaseHandler db = new DatabaseHandler(this);
-    ArrayList<Graph> imageArry = new ArrayList<Graph>();
+
     GraphImageAdapter adapter;
 
     @Override
@@ -43,21 +43,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         addButton.setBackground(null);
         addButton.setOnClickListener(this);
 
-        Log.w("Reading: ", "Reading all graphs..");
-        List<Graph> graphs = db.getAllGraphs();
-
-        Log.w("Read: ", "Read all graphs");
-        for (Graph graph : graphs) {
-            String log = "ID: "+graph.getID()+" ,Name: " + graph.getName();
-            Log.w("Name: ", log);
-
-            imageArry.add(graph);
-
-        }
-        adapter = new GraphImageAdapter(this, R.layout.main_list, imageArry);
-        ListView graphList = (ListView) findViewById(R.id.main_listview);
-        graphList.setAdapter(adapter);
-        graphList.setOnItemClickListener(mItemClickListener);
+        showGraphs();
     }
 
     AdapterView.OnItemClickListener mItemClickListener = new AdapterView.OnItemClickListener() {
@@ -88,7 +74,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         Log.w("newGraphID", String.valueOf(newGraphID));
                         addIntent.putExtra("graphID", newGraphID);
                         startActivity(addIntent);
-
+                        showGraphs();
                     }
                 });
 
@@ -124,5 +110,24 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void showGraphs() {
+        ArrayList<Graph> imageArry = new ArrayList<Graph>();
+        Log.w("Reading: ", "Reading all graphs..");
+        List<Graph> graphs = db.getAllGraphs();
+
+        Log.w("Read: ", "Read all graphs");
+        for (Graph graph : graphs) {
+            String log = "ID: "+graph.getID()+" ,Name: " + graph.getName();
+            Log.w("Name: ", log);
+
+            imageArry.add(graph);
+
+        }
+        adapter = new GraphImageAdapter(this, R.layout.main_list, imageArry);
+        ListView graphList = (ListView) findViewById(R.id.main_listview);
+        graphList.setAdapter(adapter);
+        graphList.setOnItemClickListener(mItemClickListener);
     }
 }
