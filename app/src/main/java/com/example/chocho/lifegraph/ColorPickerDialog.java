@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
  * Created by chocho on 2015-02-01.
  */
 public class ColorPickerDialog extends DialogFragment implements ColorPickerSwatch.OnColorSelectedListener {
+    DatabaseHandler db = null;
     protected AlertDialog mAlertDialog;
     private DialogInterface.OnDismissListener _listener;
     protected int[] mColors = null;
@@ -30,14 +31,20 @@ public class ColorPickerDialog extends DialogFragment implements ColorPickerSwat
     String new_cate_name;
     String new_cate_color;
 
+    int call = -1;
+    int categoryID = -1;
+
     private void refreshPalette() {
         if ((this.mPalette != null) && (this.mColors != null))
             this.mPalette.drawPalette(this.mColors, this.mSelectedColor);
     }
 
-    public void initialize(int titleId, int[] colors, int selectedColor, int columns, int size) {
+    public void initialize(int titleId, int[] colors, int selectedColor, int columns, int size, int tCall, int tCategoryID) {
         setArguments(titleId, columns, size);
         setColors(colors, selectedColor);
+
+        this.call = tCall;
+        this.categoryID = tCategoryID;
     }
 
     public void onColorSelected(int selectedColor) {
@@ -75,20 +82,43 @@ public class ColorPickerDialog extends DialogFragment implements ColorPickerSwat
         final EditText color_edit = (EditText) view.findViewById(R.id.color_dialog_edit);
         final AlertDialog.Builder color_dialog = new AlertDialog.Builder(getActivity());
 
+        if(db == null) db = new DatabaseHandler(view.getContext());
+        if(categoryID != -1) color_edit.setText(db.getCategory(categoryID).getName());
+
         color_dialog.setTitle(this.mTitleResId).setView(view);
         color_dialog.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                DatabaseHandler db = new DatabaseHandler(view.getContext());
-                new_cate_name = color_edit.getText().toString();
+                /*new_cate_name = color_edit.getText().toString();
                 new_cate_color = String.format("#%06X", (0xFFFFFF & (mSelectedColor)));
                 Category new_cate = new Category(new_cate_name, new_cate_color);
                 db.createCategory(new_cate);
-                /*
-                if (_listener == null) {} else {
-                    _listener.onDismiss();
+
+                if(call == 1) {
+                    EventActivity callingActivity = (EventActivity) getActivity();
+                    callingActivity.updateCategorySpinner();
                 }*/
-                EventActivity callingActivity = (EventActivity) getActivity();
-                callingActivity.updateCategorySpinner();
+
+                new_cate_name = color_edit.getText().toString();
+                new_cate_color = String.format("#%06X", (0xFFFFFF & (mSelectedColor)));
+
+                if(categoryID == -1) {
+                    Category new_cate = new Category(new_cate_name, new_cate_color);
+                    db.createCategory(new_cate);
+                }
+                else
+                {
+                    Category new_cate = new Category(categoryID, new_cate_name, new_cate_color);
+                    db.updateCategory(new_cate);
+                }
+
+                if (call == 1) {
+                    EventActivity callingActivity = (EventActivity) getActivity();
+                    callingActivity.updateCategorySpinner();
+                } else if (call == 2) {
+                    CategoryListActivity callingActivity = (CategoryListActivity) getActivity();
+                    callingActivity.initializeList();
+                }
+
                 dialog.dismiss();
             }
         });

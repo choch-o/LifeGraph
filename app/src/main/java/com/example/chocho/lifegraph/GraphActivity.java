@@ -172,6 +172,7 @@ public class GraphActivity extends Activity implements View.OnClickListener
     public void onBackPressed() {
         Bitmap tBitmap;
 
+        for(int i = 0 ; i < itemSize ; i ++) myCheck[i] = false;
         saveGraph();
         tBitmap = bitmap;
 
@@ -252,7 +253,6 @@ public class GraphActivity extends Activity implements View.OnClickListener
                             .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int id) {
-                                    ///////////////
                                 }
                             });
 
@@ -375,7 +375,6 @@ public class GraphActivity extends Activity implements View.OnClickListener
             {
                 if(myCheck[i])
                 {
-                    /////////////////////////////////////////////////////////////////////////////////////////
                     //Category Color
                     if(i == (itemSize - 1)) getRGB(db.getCategory(1).getColor());
                     else getRGB(db.getCategory(i + 2).getColor());

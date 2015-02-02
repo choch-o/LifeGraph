@@ -63,13 +63,11 @@ public class EventActivity extends FragmentActivity{
         age_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 //Toast.makeText(EventActivity.this, "You Selected : " + ageList.get(position)+" Level ",Toast.LENGTH_SHORT).show();
-
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-
         score_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(EventActivity.this, "You Selected : " + ageList.get(position)+" Level ",Toast.LENGTH_SHORT).show();
@@ -78,7 +76,6 @@ public class EventActivity extends FragmentActivity{
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-
         category_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(EventActivity.this, "You Selected : " + ageList.get(position)+" Level ",Toast.LENGTH_SHORT).show();
@@ -89,7 +86,7 @@ public class EventActivity extends FragmentActivity{
         });
         */
         final ColorPickerDialog colorPickerDialog = new ColorPickerDialog();
-        colorPickerDialog.initialize(R.string.dialog_title, new int[]{Color.CYAN, Color.LTGRAY, Color.BLACK, Color.BLUE, Color.GREEN, Color.MAGENTA, Color.RED, Color.GRAY, Color.YELLOW}, Color.YELLOW, 3, 2);
+        colorPickerDialog.initialize(R.string.dialog_title, new int[]{Color.CYAN, Color.LTGRAY, Color.BLACK, Color.BLUE, Color.GREEN, Color.MAGENTA, Color.RED, Color.GRAY, Color.YELLOW}, Color.YELLOW, 3, 2, 1, -1);
         colorPickerDialog.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener() {
             @Override
             public void onColorSelected(int color) {

@@ -88,8 +88,24 @@ public class ListActivity extends Activity implements View.OnClickListener {
 
                     alertDialogBuilder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
+                            int chk = 0;
+                            Event tEvent = null;
                             db.deleteEvent(events.get(tPos).getID());
                             tPos = -1;
+
+                            events = db.getAllEvents();
+                            if(events.size()==0){}
+                            else if(events.size()==1) db.updateEvent2(events.get(0));
+                            else {
+                                for (Event event : events) {
+                                    if(tEvent != null)
+                                    {
+                                        if((event.getID() - 1) != tEvent.getID()) chk = 1;
+                                        if(chk == 1) db.updateEvent2(event);
+                                    }
+                                    tEvent = event;
+                                }
+                            }
                             initializeList();
                         }
                     });

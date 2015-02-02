@@ -277,6 +277,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 new String[] { String.valueOf(event.getID()) });
     }
 
+    public int updateEvent2(Event event) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_ID, event.getID() - 1);
+        values.put(KEY_EVENT_NAME, event.getEventName());
+        values.put(KEY_AGE, event.getAge());
+        values.put(KEY_SCORE, event.getScore());
+        values.put(KEY_CATEGORY, event.getCategory());
+
+        // updating row
+        return db.update(TABLE_EVENT, values, KEY_ID + " = ?",
+                new String[] { String.valueOf(event.getID()) });
+    }
+
     /**
      * Deleting a event
      */
@@ -477,6 +492,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
+        values.put(KEY_CATE_NAME, cate.getName());
+        values.put(KEY_COLOR, cate.getColor());
+
+        // updating row
+        return db.update(TABLE_CATEGORY, values, KEY_ID + " = ?",
+                new String[] { String.valueOf(cate.getID()) });
+    }
+
+    public int updateCategory2(Category cate) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_ID, cate.getID() - 1);
         values.put(KEY_CATE_NAME, cate.getName());
         values.put(KEY_COLOR, cate.getColor());
 
