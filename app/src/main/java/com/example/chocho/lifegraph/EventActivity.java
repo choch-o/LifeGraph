@@ -161,9 +161,6 @@ public class EventActivity extends FragmentActivity{
 
         Log.w("Read: ", "Read all categories");
         for (Category cate : cates) {
-            String log = "ID: "+cate.getID()+" ,Name: " + cate.getName();
-            Log.w("Name: ", log);
-
             if (!cate.getName().equals("기타"))
                 categoryList.add(cate.getName());
 
@@ -189,7 +186,6 @@ public class EventActivity extends FragmentActivity{
             String prev_event_name = prev_event.getEventName();
             int prev_age = prev_event.getAge();
             int prev_score = prev_event.getScore();
-            Log.w("EDITTED SCORE", String.valueOf(prev_score));
             String prev_cate = prev_event.getCategory();
 
             event_edit.setText(prev_event_name);
@@ -200,8 +196,6 @@ public class EventActivity extends FragmentActivity{
             age_spinner.setSelection(age_position);
             score_spinner.setSelection(score_position);
             category_spinner.setSelection(cate_position);
-
-            Log.w("EDIT REQUEST", "for edit");
         }
     }
 
@@ -211,8 +205,6 @@ public class EventActivity extends FragmentActivity{
 
         Log.w("Read: ", "Read all categories");
         for (Category cate : cates) {
-            String log = "ID: "+cate.getID()+" ,Name: " + cate.getName();
-            Log.w("Name: ", log);
 
             if (!cate.getName().equals("기타"))
                 categoryList.add(cate.getName());
