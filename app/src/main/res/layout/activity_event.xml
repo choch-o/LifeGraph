@@ -26,7 +26,7 @@
     <EditText
         android:id="@+id/event_edittext"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:layout_marginLeft="20dp"
         android:layout_marginStart="20dp"
         android:layout_toRightOf="@id/event"
@@ -37,7 +37,9 @@
         android:textSize="8pt"
         android:singleLine="true"
         android:scrollHorizontally="true"
-        android:inputType="text"/>
+        android:inputType="text"
+        android:paddingLeft="15dp"
+        android:background="@drawable/rounded_rectangle"/>
     <ImageView
         android:id="@+id/event_line1"
         android:layout_width="fill_parent"
@@ -62,7 +64,7 @@
     <Spinner
         android:id="@+id/age_spinner"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:layout_marginLeft="20dp"
         android:layout_marginStart="20dp"
         android:layout_toRightOf="@id/age"
@@ -70,7 +72,8 @@
         android:layout_alignTop="@id/age"
         android:layout_marginRight="35dp"
         android:layout_marginEnd="35dp"
-
+        android:paddingLeft="10dp"
+        android:background="@drawable/rounded_rectangle"
         />
     <ImageView
         android:id="@+id/event_line2"
@@ -96,7 +99,7 @@
     <Spinner
         android:id="@+id/score_spinner"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:layout_marginLeft="20dp"
         android:layout_marginStart="20dp"
         android:layout_toRightOf="@id/score"
@@ -104,7 +107,8 @@
         android:layout_alignTop="@id/score"
         android:layout_marginRight="35dp"
         android:layout_marginEnd="35dp"
-
+        android:paddingLeft="10dp"
+        android:background="@drawable/rounded_rectangle"
         />
     <ImageView
         android:id="@+id/event_line3"
@@ -137,17 +141,21 @@
         android:layout_alignParentEnd="true"
         android:layout_marginRight="35dp"
         android:layout_marginEnd="35dp"
-        android:layout_alignTop='@id/category'/>
+        android:layout_alignTop='@id/category'
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"/>
     <Spinner
         android:id="@+id/category_spinner"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:layout_toLeftOf="@id/event_add_cate"
         android:layout_toStartOf="@id/event_add_cate"
         android:layout_alignLeft="@id/age_spinner"
         android:layout_alignStart="@id/age_spinner"
         android:layout_alignTop="@id/category"
         android:textSize="8pt"
+        android:paddingLeft="10dp"
+        android:background="@drawable/rounded_rectangle"
         />
 
 
