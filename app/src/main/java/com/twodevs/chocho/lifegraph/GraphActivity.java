@@ -419,9 +419,12 @@ public class GraphActivity extends Activity implements View.OnClickListener
                         }
 
                         //Write Text
-                        name = name.substring(0, qw);
-                        if(linePoint[1] >= linePoint[3]) canvas.drawText(name, x - circleRadius - qw * 10, y, pText);
-                        else canvas.drawText(name, x - circleRadius - qw * 10, y + 20, pText);
+                        if(isCheckText) {
+                            name = name.substring(0, qw);
+                            if (linePoint[1] >= linePoint[3])
+                                canvas.drawText(name, x - circleRadius - qw * 10, y, pText);
+                            else canvas.drawText(name, x - circleRadius - qw * 10, y + 20, pText);
+                        }
 
                         x2 = x;
                         y2 = y;
@@ -459,9 +462,12 @@ public class GraphActivity extends Activity implements View.OnClickListener
                     }
 
                     //Write Text
-                    name = name.substring(0, qw);
-                    if(linePoint[1] >= linePoint[3]) canvas.drawText(name, x - circleRadius - qw * 10, y, pText);
-                    else canvas.drawText(name, x - circleRadius - qw * 10, y + 20, pText);
+                    if(isCheckText) {
+                        name = name.substring(0, qw);
+                        if (linePoint[1] >= linePoint[3])
+                            canvas.drawText(name, x - circleRadius - qw * 10, y, pText);
+                        else canvas.drawText(name, x - circleRadius - qw * 10, y + 20, pText);
+                    }
 
                     x2 = x;
                     y2 = y;
