@@ -1,4 +1,4 @@
-package com.example.chocho.lifegraph;
+package com.twodevs.chocho.lifegraph;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,11 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by chocho on 2015-01-27.

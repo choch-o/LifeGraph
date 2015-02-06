@@ -10,6 +10,16 @@
         android:layout_height="match_parent">
 
         <ImageButton
+            android:id="@+id/visualButton"
+            android:scaleType="fitXY"
+            android:layout_width="75dp"
+            android:layout_height="45dp"
+            android:src="@drawable/eye_icon"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            />
+
+        <ImageButton
             android:id="@+id/graphAddButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -1,4 +1,4 @@
-package com.example.chocho.lifegraph;
+package com.twodevs.chocho.lifegraph;
 
 import android.app.Activity;
 import android.content.Context;

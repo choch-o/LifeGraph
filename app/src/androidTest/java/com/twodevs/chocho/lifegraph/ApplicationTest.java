@@ -1,4 +1,4 @@
-package com.example.chocho.lifegraph;
+package com.twodevs.chocho.lifegraph;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

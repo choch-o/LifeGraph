@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.chocho.lifegraph" >
+    package="com.twodevs.chocho.lifegraph" >
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <application
@@ -10,7 +10,7 @@
         android:theme="@style/AppTheme" >
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.twodevs.chocho.lifegraph.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,19 +19,19 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".GraphActivity"
+            android:name="com.twodevs.chocho.lifegraph.GraphActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name=".EventActivity"
+            android:name="com.twodevs.chocho.lifegraph.EventActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name=".ListActivity"
+            android:name="com.twodevs.chocho.lifegraph.ListActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name=".CategoryListActivity"
+            android:name="com.twodevs.chocho.lifegraph.CategoryListActivity"
             android:label="@string/app_name" >
         </activity>
     </application>

@@ -1,4 +1,4 @@
-package com.example.chocho.lifegraph;
+package com.twodevs.chocho.lifegraph;
 
 /**
  * Created by chocho on 2015-01-27.

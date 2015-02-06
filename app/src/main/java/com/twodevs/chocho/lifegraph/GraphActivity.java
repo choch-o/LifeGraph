@@ -1,4 +1,4 @@
-package com.example.chocho.lifegraph;
+package com.twodevs.chocho.lifegraph;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -12,7 +12,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -54,11 +53,12 @@ public class GraphActivity extends Activity implements View.OnClickListener
     axis view = null;
     axis tView = null;
     FrameLayout framelayout;
-    ImageButton graphAddButton, moveToListButton, categoryListButton;
+    ImageButton visualButton, graphAddButton, moveToListButton, categoryListButton;
 
     int itemSize;
     int eventSize = 0;
     int width, height;
+    boolean isCheckText = false;
     boolean isCheck = false;
     boolean[] myCheck;
     CharSequence[] categoryList;
@@ -78,12 +78,15 @@ public class GraphActivity extends Activity implements View.OnClickListener
         graphID = getIntent().getLongExtra("graphID", 0);
 
         //Active Button
+        visualButton = (ImageButton) findViewById(R.id.visualButton);
         graphAddButton = (ImageButton) findViewById(R.id.graphAddButton);
         moveToListButton = (ImageButton) findViewById(R.id.moveToListButton);
         categoryListButton = (ImageButton) findViewById(R.id.categoryListButton);
+        visualButton.setBackground(null);
         graphAddButton.setBackground(null);
         moveToListButton.setBackground(null);
         categoryListButton.setBackground(null);
+        visualButton.setOnClickListener(this);
         graphAddButton.setOnClickListener(this);
         moveToListButton.setOnClickListener(this);
         categoryListButton.setOnClickListener(this);
@@ -189,6 +192,7 @@ public class GraphActivity extends Activity implements View.OnClickListener
     public void onClick(View v) {
 
         if(isCheck == true) {
+            visualButton.setVisibility(View.VISIBLE);
             graphAddButton.setVisibility(View.VISIBLE);
             moveToListButton.setVisibility(View.VISIBLE);
             categoryListButton.setVisibility(View.VISIBLE);
@@ -262,6 +266,16 @@ public class GraphActivity extends Activity implements View.OnClickListener
 
                     break;
 
+                case R.id.visualButton:
+                    if(isCheckText == false) isCheckText = true;
+                    else isCheckText = false;
+
+                    framelayout.removeView(view);
+                    view = new axis(getApplicationContext());
+                    framelayout.addView(view);
+                    saveGraph();
+
+                    break;
             }
         }
     }
@@ -379,6 +393,7 @@ public class GraphActivity extends Activity implements View.OnClickListener
                     if(i == (itemSize - 1)) getRGB(db.getCategory(1).getColor());
                     else getRGB(db.getCategory(i + 2).getColor());
 
+                    pText.setColor(Color.rgb(red, green, blue));
                     pLine.setStrokeWidth(circleRadius / 2);
                     pLine.setColor(Color.rgb(red, green, blue));
                     pCircle.setColor(Color.rgb(red, green, blue));
@@ -388,6 +403,8 @@ public class GraphActivity extends Activity implements View.OnClickListener
                         Event tEv = eventArry.get(eventTable[i][j]);
                         int age = tEv._age;
                         int score = tEv._score;
+                        String name = tEv.getEventName();
+                        int qw = Math.min(4, name.length());
 
                         //Draw Circle
                         x = px + (width - px * 2) / 100 * age;
@@ -401,6 +418,11 @@ public class GraphActivity extends Activity implements View.OnClickListener
                             canvas.drawLine(linePoint[0], linePoint[1], linePoint[2], linePoint[3], pLine);
                         }
 
+                        //Write Text
+                        name = name.substring(0, qw);
+                        if(linePoint[1] >= linePoint[3]) canvas.drawText(name, x - circleRadius - qw * 10, y, pText);
+                        else canvas.drawText(name, x - circleRadius - qw * 10, y + 20, pText);
+
                         x2 = x;
                         y2 = y;
                     }
@@ -410,6 +432,8 @@ public class GraphActivity extends Activity implements View.OnClickListener
 
             if(isC == false)
             {
+
+                pText.setColor(Color.rgb(0, 204, 255));
                 pLine.setStrokeWidth(circleRadius / 2);
                 pLine.setColor(Color.rgb(0, 204, 255));
                 pCircle.setColor(Color.rgb(0, 204, 255));
@@ -419,6 +443,8 @@ public class GraphActivity extends Activity implements View.OnClickListener
                     Event tEv = eventArry.get(allEventTable[i]);
                     int age = tEv._age;
                     int score = tEv._score;
+                    String name = tEv.getEventName();
+                    int qw = Math.min(4, name.length());
 
                     //Draw Circle
                     x = px + (width - px * 2) / 100 * age;
@@ -431,6 +457,11 @@ public class GraphActivity extends Activity implements View.OnClickListener
                         getPoint(x, y, x2, y2);
                         canvas.drawLine(linePoint[0], linePoint[1], linePoint[2], linePoint[3], pLine);
                     }
+
+                    //Write Text
+                    name = name.substring(0, qw);
+                    if(linePoint[1] >= linePoint[3]) canvas.drawText(name, x - circleRadius - qw * 10, y, pText);
+                    else canvas.drawText(name, x - circleRadius - qw * 10, y + 20, pText);
 
                     x2 = x;
                     y2 = y;
@@ -535,18 +566,22 @@ public class GraphActivity extends Activity implements View.OnClickListener
 
                     if(isCheck == false) {
                         animFadeIn = AnimationUtils.loadAnimation(GraphActivity.this, android.R.anim.fade_in);
+                        visualButton.setAnimation(animFadeIn);
                         graphAddButton.setAnimation(animFadeIn);
                         moveToListButton.setAnimation(animFadeIn);
                         categoryListButton.setAnimation(animFadeIn);
+                        visualButton.setVisibility(View.VISIBLE);
                         graphAddButton.setVisibility(View.VISIBLE);
                         moveToListButton.setVisibility(View.VISIBLE);
                         categoryListButton.setVisibility(View.VISIBLE);
                     }
                     else {
                         animFadeOut = AnimationUtils.loadAnimation(GraphActivity.this, android.R.anim.fade_out);
+                        visualButton.setAnimation(animFadeOut);
                         graphAddButton.setAnimation(animFadeOut);
                         moveToListButton.setAnimation(animFadeOut);
                         categoryListButton.setAnimation(animFadeOut);
+                        visualButton.setVisibility(View.INVISIBLE);
                         graphAddButton.setVisibility(View.INVISIBLE);
                         moveToListButton.setVisibility(View.INVISIBLE);
                         categoryListButton.setVisibility(View.INVISIBLE);
@@ -675,6 +710,7 @@ public class GraphActivity extends Activity implements View.OnClickListener
 
             if(posX >= 970 && posX <= width && posY >= 0 && posY <= 90) return false;
             else if(posX >= 1060 && posX <= width && posY >= 550 && posY <= height) return false;
+            else if(posX >= 50 && posX <= 200 && posY >= 0 && posY <= 80) return false;
             else return true;
         }
 
