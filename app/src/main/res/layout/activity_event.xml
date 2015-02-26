@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true">
+<RelativeLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
@@ -9,11 +14,13 @@
     android:background="@color/background"
     android:id="@+id/event_container">
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:adjustViewBounds="true"
         android:src="@drawable/white_rect"
         android:contentDescription="@null"
-        android:layout_alignParentTop="true"/>
+        android:scaleType="fitXY"
+        />
     <TextView
         android:id="@+id/event"
         android:layout_width="wrap_content"
@@ -157,8 +164,6 @@
         android:paddingLeft="10dp"
         android:background="@drawable/rounded_rectangle"
         />
-
-
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -168,10 +173,12 @@
             android:id="@+id/event_cancel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="취소"
+            android:text="@string/cancel"
             android:layout_weight="1"
             android:layout_marginRight="2.5dp"
-            android:layout_marginLeft="5dp"/>
+            android:layout_marginEnd="2.5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"/>
         <Button
             android:id="@+id/event_done"
             android:layout_width="0dp"
@@ -179,6 +186,9 @@
             android:text="@string/done"
             android:layout_weight="1"
             android:layout_marginLeft="2.5dp"
-            android:layout_marginRight="5dp"/>
+            android:layout_marginStart="2.5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp"/>
     </LinearLayout>
 </RelativeLayout>
+</ScrollView>

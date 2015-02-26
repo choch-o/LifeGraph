@@ -113,17 +113,22 @@ public class MainActivity extends Activity implements View.OnClickListener {
         List<Graph> graphs = db.getAllGraphs();
 
         Log.w("Read: ", "Read all graphs");
-        for (Graph graph : graphs) {
-            String log = "ID: "+graph.getID()+" ,Name: " + graph.getName();
-            Log.w("Name: ", log);
-
-            imageArry.add(graph);
-
+        if (graphs == null) {
+            Log.w("GRAPHS NULL", "graphs is null");
         }
-        adapter = new GraphImageAdapter(this, R.layout.main_list, imageArry);
-        ListView graphList = (ListView) findViewById(R.id.main_listview);
-        graphList.setAdapter(adapter);
-        graphList.setOnItemClickListener(mItemClickListener);
+        else {
+            for (Graph graph : graphs) {
+                String log = "ID: " + graph.getID() + " ,Name: " + graph.getName();
+                Log.w("Name: ", log);
+
+                imageArry.add(graph);
+
+            }
+            adapter = new GraphImageAdapter(this, R.layout.main_list, imageArry);
+            ListView graphList = (ListView) findViewById(R.id.main_listview);
+            graphList.setAdapter(adapter);
+            graphList.setOnItemClickListener(mItemClickListener);
+        }
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

@@ -9,13 +9,15 @@
     <ImageView
         android:id="@+id/mainGraphImage"
         android:layout_width="fill_parent"
-        android:layout_height="250dp"
+        android:layout_height="wrap_content"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
         android:gravity="center_vertical"/>
     <TextView
         android:id="@+id/mainGraphTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/mainGraphImage"
+        android:layout_below="@id/mainGraphImage"
         android:padding="20dp" />
     </RelativeLayout>
 </LinearLayout>

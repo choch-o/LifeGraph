@@ -79,6 +79,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String INSERT_DEFAULT_CATE_4 = "INSERT INTO " + TABLE_CATEGORY + "(" + KEY_ID + "," + KEY_CATE_NAME + "," + KEY_COLOR
             + ") VALUES(4, '만남', '#00FF00')";
 
+    // Sample graph insert statement
+    /*private static final String INSERT_SAMPLE_GRAPH = "INSERT INTO " +TABLE_GRAPH + "(" + KEY_ID + "," + KEY_NAME + "," + KEY_DATE + "," + KEY_EVENT_NUM + "," + KEY_IMAGE
+            + ") VALUES(1, '예시', '2015-02-27 03:32:10', 6, ";
+            */
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
