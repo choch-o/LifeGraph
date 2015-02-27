@@ -1,11 +1,15 @@
 package com.twodevs.chocho.lifegraph;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -20,6 +24,7 @@ import java.util.List;
  * Created by chocho on 2015-01-25.
  */
 public class EventActivity extends FragmentActivity{
+    Dialog dialogList;
     Context context = this;
     DatabaseHandler db = new DatabaseHandler(this);
 
@@ -210,5 +215,43 @@ public class EventActivity extends FragmentActivity{
         ArrayAdapter<String> categoryAdapter = new ArrayAdapter<String>(EventActivity.this, android.R.layout.simple_spinner_item, categoryList);
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         category_spinner.setAdapter(categoryAdapter);
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_help) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+            builder.setTitle("도움말")
+                    .setMessage(R.string.helpMessage)
+                    .setPositiveButton(R.string.done, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                        }
+                    });
+
+            dialogList = builder.create();
+            dialogList.setCanceledOnTouchOutside(true);
+            dialogList.show();
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

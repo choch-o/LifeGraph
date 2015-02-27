@@ -2,6 +2,7 @@ package com.twodevs.chocho.lifegraph;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,6 +22,7 @@ import java.util.List;
 
 
 public class MainActivity extends Activity implements View.OnClickListener {
+    Dialog dialogList;
 
     final Context context = this;
     DatabaseHandler db = new DatabaseHandler(this);
@@ -100,7 +102,22 @@ public class MainActivity extends Activity implements View.OnClickListener {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_help) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+            builder.setTitle("도움말")
+                    .setMessage(R.string.helpMessage)
+                    .setPositiveButton(R.string.done, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                        }
+                    });
+
+            dialogList = builder.create();
+            dialogList.setCanceledOnTouchOutside(true);
+            dialogList.show();
+
             return true;
         }
 

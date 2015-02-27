@@ -278,21 +278,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 new String[] { String.valueOf(event.getID()) });
     }
 
-    public int updateEvent2(Event event) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(KEY_ID, event.getID() - 1);
-        values.put(KEY_EVENT_NAME, event.getEventName());
-        values.put(KEY_AGE, event.getAge());
-        values.put(KEY_SCORE, event.getScore());
-        values.put(KEY_CATEGORY, event.getCategory());
-
-        // updating row
-        return db.update(TABLE_EVENT, values, KEY_ID + " = ?",
-                new String[] { String.valueOf(event.getID()) });
-    }
-
     /**
      * Deleting a event
      */

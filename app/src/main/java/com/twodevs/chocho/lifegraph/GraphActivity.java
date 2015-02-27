@@ -12,8 +12,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -48,6 +51,7 @@ public class GraphActivity extends Activity implements View.OnClickListener
     List<Event> eventArry;
     List<Category> categoryArry;
     Bitmap bitmap;
+    int[] categoryIndex;
 
     Intent intent;
     axis view = null;
@@ -116,6 +120,7 @@ public class GraphActivity extends Activity implements View.OnClickListener
     public void initializeCategory() {
         int j = 0;
         int chk = 0;
+        int tmp2 = -1;
         CharSequence tmp = null;
 
         itemSize = db.getCategoryCount();
@@ -123,6 +128,7 @@ public class GraphActivity extends Activity implements View.OnClickListener
 
         myCheck = new boolean[itemSize];
         categoryList = new CharSequence[itemSize];
+        categoryIndex = new int[itemSize];
         mSelectedItmes = new ArrayList<Integer>();
         mTempSelectedItmes = new ArrayList<Integer>();
         for(int i = 0 ; i < itemSize ; i ++) myCheck[i] = false;
@@ -132,10 +138,18 @@ public class GraphActivity extends Activity implements View.OnClickListener
             {
                 chk = 1;
                 tmp = cate.getName();
+                tmp2 = cate.getID();
             }
-            else categoryList[j ++] = cate.getName();
+            else
+            {
+                categoryList[j] = cate.getName();
+                categoryIndex[j ++] = cate.getID();
+            }
         }
-        categoryList[j ++] = tmp;
+        categoryList[j] = tmp;
+        categoryIndex[j ++] = tmp2;
+
+        Log.w("categorysize - ", toString().valueOf(itemSize));
     }
 
     void saveGraph()
@@ -252,6 +266,8 @@ public class GraphActivity extends Activity implements View.OnClickListener
                                     view = new axis(getApplicationContext());
                                     framelayout.addView(view);
                                     saveGraph();
+
+                                    mSelectedItmes = mTempSelectedItmes;
                                 }
                             })
                             .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -309,6 +325,43 @@ public class GraphActivity extends Activity implements View.OnClickListener
                 startActivityForResult(intent, 2);
             }
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_help) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+            builder.setTitle("도움말")
+                    .setMessage(R.string.helpMessage)
+                    .setPositiveButton(R.string.done, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                        }
+                    });
+
+            dialogList = builder.create();
+            dialogList.setCanceledOnTouchOutside(true);
+            dialogList.show();
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private class axis extends View {
@@ -390,8 +443,7 @@ public class GraphActivity extends Activity implements View.OnClickListener
                 if(myCheck[i])
                 {
                     //Category Color
-                    if(i == (itemSize - 1)) getRGB(db.getCategory(1).getColor());
-                    else getRGB(db.getCategory(i + 2).getColor());
+                    getRGB(db.getCategory(categoryIndex[i]).getColor());
 
                     pText.setColor(Color.rgb(red, green, blue));
                     pLine.setStrokeWidth(circleRadius / 2);
@@ -514,7 +566,13 @@ public class GraphActivity extends Activity implements View.OnClickListener
 
             for(int i = 0 ; i < eventSize ; i ++) {
                 tEv = eventArry.get(i);
-                int category = getId(tEv.getCategory());
+                int category = -1;
+
+                for(category = 0 ; category < itemSize ; category ++)
+                {
+                    if(tEv.getCategory().equals(categoryList[category])) break;
+                }
+                Log.w("eventca - ", tEv.getCategory());
 
                 if (category != -1)
                 {
