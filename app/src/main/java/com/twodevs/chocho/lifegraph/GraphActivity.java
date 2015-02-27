@@ -456,7 +456,7 @@ public class GraphActivity extends Activity implements View.OnClickListener
                         int age = tEv._age;
                         int score = tEv._score;
                         String name = tEv.getEventName();
-                        int qw = Math.min(4, name.length());
+                        int qw = name.length();
 
                         //Draw Circle
                         x = px + (width - px * 2) / 100 * age;
@@ -499,7 +499,7 @@ public class GraphActivity extends Activity implements View.OnClickListener
                     int age = tEv._age;
                     int score = tEv._score;
                     String name = tEv.getEventName();
-                    int qw = Math.min(4, name.length());
+                    int qw = name.length();
 
                     //Draw Circle
                     x = px + (width - px * 2) / 100 * age;

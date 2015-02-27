@@ -2,9 +2,12 @@ package com.twodevs.chocho.lifegraph;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -80,6 +83,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             + ") VALUES(4, '만남', '#00FF00')";
 
     // Sample graph insert statement
+
     /*private static final String INSERT_SAMPLE_GRAPH = "INSERT INTO " +TABLE_GRAPH + "(" + KEY_ID + "," + KEY_NAME + "," + KEY_DATE + "," + KEY_EVENT_NUM + "," + KEY_IMAGE
             + ") VALUES(1, '예시', '2015-02-27 03:32:10', 6, ";
             */
@@ -514,5 +518,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         if (db != null && db.isOpen())
             db.close();
     }
+
 
 }
