@@ -15,7 +15,7 @@
             android:gravity="center_vertical"
             android:paddingLeft="10dp"
             android:textSize="25sp"
-            android:background="#FFFFFF"
+            android:background="@drawable/white_rect"
             android:layout_width="match_parent"
             android:layout_height="@dimen/activity_event_list_height"/>
 

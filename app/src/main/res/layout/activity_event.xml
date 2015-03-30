@@ -175,20 +175,30 @@
             android:layout_height="wrap_content"
             android:text="@string/cancel"
             android:layout_weight="1"
-            android:layout_marginRight="2.5dp"
-            android:layout_marginEnd="2.5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginStart="5dp"/>
+            android:layout_marginRight="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginStart="40dp"/>
         <Button
             android:id="@+id/event_done"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/done"
             android:layout_weight="1"
-            android:layout_marginLeft="2.5dp"
-            android:layout_marginStart="2.5dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginEnd="5dp"/>
+            android:layout_marginLeft="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginRight="40dp"
+            android:layout_marginEnd="40dp"/>
     </LinearLayout>
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="25dp"
+        android:id="@+id/logo_kr"
+        android:src="@drawable/kedi_logo_kr"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_alignParentBottom="true"/>
+     />
 </RelativeLayout>
 </ScrollView>

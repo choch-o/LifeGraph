@@ -64,7 +64,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             Event event6 = new Event("연구 중 슬럼프", 37, -1, "학업");
             Event event7 = new Event("연구 성과가 보이기 시작", 44, 3, "학업");
             Event event8 = new Event("논문 발표", 50, 9, "학업");
-            Event event9 = new Event("KAIST 교수 취입", 55, 10, "학업");
+            Event event9 = new Event("KAIST 교수 취임", 55, 10, "학업");
             Event event10 = new Event("명예퇴임", 65, 8, "학업");
             Event event11 = new Event("배우자와 세계여행", 66, 10, "여행");
             Event event12 = new Event("행복한 노후", 100, 10, "만남");
@@ -81,6 +81,20 @@ public class MainActivity extends Activity implements View.OnClickListener {
             db.createEvent(event10, sampleGraphID);
             db.createEvent(event11, sampleGraphID);
             db.createEvent(event12, sampleGraphID);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+            builder.setTitle("도움말")
+                    .setMessage(R.string.helpMessage)
+                    .setPositiveButton(R.string.done, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                        }
+                    });
+
+            dialogList = builder.create();
+            dialogList.setCanceledOnTouchOutside(true);
+            dialogList.show();
         }
 
         editor = sharedPreferences.edit();

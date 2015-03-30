@@ -1,14 +1,15 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="20dp"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity"
+     tools:context=".MainActivity"
     android:id="@+id/main_container"
     android:orientation="vertical"
     android:background="@color/background">
 
     <RelativeLayout
+        android:id="@+id/main_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
@@ -24,8 +25,10 @@
              />
     </RelativeLayout>
     <LinearLayout
+        android:layout_below="@id/main_header"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="40dp"
         >
         <ListView
             android:id="@+id/main_listview"
@@ -36,5 +39,15 @@
 
         </LinearLayout>
 
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="25dp"
+        android:id="@+id/logo_kr"
+        android:src="@drawable/kedi_logo_kr"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        />
+ />
 
-</LinearLayout>
+</RelativeLayout>
