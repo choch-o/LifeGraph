@@ -1,4 +1,4 @@
-package com.twodevs.chocho.lifegraph;
+package com.twodevs.chocho.lifegraphKEDI;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,15 +14,16 @@ import java.util.ArrayList;
 /**
  * Created by Hwang on 2015-01-31.
  */
-public class CategoryListAdapter extends ArrayAdapter<Category> {
+public class EventListAdapter extends ArrayAdapter<Event> {
     Context context;
     int tPos, layoutResourceId;
-    ArrayList<Category> data = new ArrayList<Category>();
+    ArrayList<Event> data=new ArrayList<Event>();
 
-    public CategoryListAdapter(Context context, int layoutResourceId, ArrayList<Category> data, int tPos)
+    public EventListAdapter(Context context, int layoutResourceId, ArrayList<Event> data, int tPos)
     {
         super(context, layoutResourceId, data);
 
+        //Log.w("adapter: ", "reached adapter");
         this.layoutResourceId = layoutResourceId;
         this.context = context;
         this.data = data;
@@ -55,8 +56,8 @@ public class CategoryListAdapter extends ArrayAdapter<Category> {
             holder.txtTitle.setTextColor(Color.BLACK);
         }
 
-        Category category = data.get(position);
-        holder.txtTitle.setText(category.getName());
+        Event event = data.get(position);
+        holder.txtTitle.setText(event.getEventName());
 
         return row;
     }

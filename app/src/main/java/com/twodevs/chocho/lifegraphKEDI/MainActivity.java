@@ -1,4 +1,4 @@
-package com.twodevs.chocho.lifegraph;
+package com.twodevs.chocho.lifegraphKEDI;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -132,7 +132,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         Log.w("newGraphID", String.valueOf(newGraphID));
                         addIntent.putExtra("graphID", newGraphID);
                         startActivityForResult(addIntent, 1);
-                        showGraphs();
+                        //showGraphs();
                     }
                 });
 
@@ -210,7 +210,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == 1 && resultCode == 2) {
+        //if(requestCode == 1 && resultCode == 2) {
+        if(requestCode == 1) {
             Log.w("GRAPH FINISHED", "entered");
             showGraphs();
         }

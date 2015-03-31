@@ -1,4 +1,4 @@
-package com.twodevs.chocho.lifegraph;
+package com.twodevs.chocho.lifegraphKEDI;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

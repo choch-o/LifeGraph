@@ -1,4 +1,4 @@
-package com.twodevs.chocho.lifegraph;
+package com.twodevs.chocho.lifegraphKEDI;
 
 import android.app.Activity;
 import android.app.AlertDialog;
